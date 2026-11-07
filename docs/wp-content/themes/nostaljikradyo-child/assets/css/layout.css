@@ -525,6 +525,52 @@
   margin-top: 24px;
 }
 
+/* WC ürün arama formu Blocksy'nin "kontroller içeride" işaretlemesiyle gelir (data-form-controls="inside"),
+   ama o düzeni kuran Blocksy stili bu temada yüklenmez: düğme alt satıra düşüyor, ikon koyu zeminde koyu
+   kalıyordu (owner 2026-11-07). Kutu ve düğme tek satır; ikon beyaz. */
+.sb-cekmece__arama .woocommerce-product-search {
+  display: flex;
+  align-items: stretch;
+}
+
+.sb-cekmece__arama .search-field {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  margin: 0;
+  border-right: 0;
+  border-radius: 0;
+}
+
+.sb-cekmece__arama button[type="submit"] {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 52px;
+  min-height: 48px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--wp--preset--color--aksan);
+  color: var(--wp--preset--color--aksan-uzeri);
+  cursor: pointer;
+}
+
+.sb-cekmece__arama button[type="submit"]:hover {
+  background: var(--wp--preset--color--metin);
+}
+
+.sb-cekmece__arama button[type="submit"] svg.ct-icon {
+  width: 17px;
+  height: 17px;
+  fill: currentColor;
+}
+
+.sb-cekmece__arama .ct-ajax-loader {
+  display: none;
+}
+
 @media (min-width: 992px) {
   .sb-header__ic {
     grid-template-columns: auto minmax(0, 1fr) auto;

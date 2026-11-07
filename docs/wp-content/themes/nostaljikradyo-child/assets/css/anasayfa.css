@@ -144,15 +144,22 @@
   100% { opacity: 0; visibility: hidden; }
 }
 
+/* Slayt metinleri aynı ızgara hücresinde üst üste: hero en uzun metin kadar boy alır, slayt değişince
+   boyu ve altındaki bölüm oynamaz (owner 2026-11-07: dar telefonda metinler farklı satıra kırılıyor, etkin
+   metin akışta, öbürleri mutlak olduğu için hero her geçişte uzayıp kısalıyordu). Metinler alta yaslı:
+   düğmeler her slaytta aynı yerde. JS yokken öbür slaytlar hidden (display: none), hücreye girmez. */
 .sb-slayt__metinler {
   position: relative;
   z-index: 3;
+  display: grid;
   width: 100%;
   padding-block: 56px 96px;
 }
 
 .sb-slayt__metin {
-  position: absolute;
+  position: relative;
+  grid-area: 1 / 1;
+  align-self: end;
   max-width: 560px;
   opacity: 0;
   transform: translateY(18px);
@@ -161,7 +168,6 @@
 }
 
 .sb-slayt__metin.is-etkin {
-  position: relative;
   opacity: 1;
   transform: none;
   pointer-events: auto;

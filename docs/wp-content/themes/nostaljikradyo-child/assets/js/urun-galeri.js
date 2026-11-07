@@ -106,7 +106,10 @@
 			}
 			var sure = { duration: 450, easing: 'cubic-bezier(0.22, 0.61, 0.36, 1)', fill: 'both' };
 			giris = yeni.animate( [ { transform: 'translateX(' + ( yon * 100 ) + '%)' }, { transform: 'translateX(0)' } ], sure );
-			var cikis = eski.animate( [ { transform: 'translateX(0)', opacity: 1 }, { transform: 'translateX(' + ( -yon * 30 ) + '%)', opacity: 0.4 } ], sure );
+			// Eski görsel de tam genişlik kadar çekilir: ikisi yan yana kayar, hiç üst üste binmez. İki görsel de
+			// mix-blend multiply; %30 kayıp yarı saydam kalan eski görsel yeninin altında koyu siluet bırakıyordu
+			// (owner 2026-11-07).
+			var cikis = eski.animate( [ { transform: 'translateX(0)' }, { transform: 'translateX(' + ( -yon * 100 ) + '%)' } ], sure );
 			cikis.onfinish = bitir;
 		}
 		// Yüklenene kadar eski görsel yerinde kalır; yüklenmezse 800 ms sonra yine de kayar.

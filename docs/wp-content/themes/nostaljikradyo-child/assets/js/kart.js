@@ -1,5 +1,5 @@
 /**
- * Model kartı (Görev 6; envanter §1.4) — li.sb-kart[data-sb-kart] ve hızlı bakışın içeriği.
+ * Model kartı (Görev 6; envanter §1.4) — li.sb-kart[data-sb-kart].
  *
  * Sunucu her rengi ürün sayfasına (?attribute_pa_renk=<slug>) giden düz bir bağlantı olarak basar, sepet
  * düğmesi ?add-to-cart= bağlantısıdır: JS yokken ikisi de çalışır. JS renk bağlantılarını WAI-ARIA radyo
@@ -55,11 +55,11 @@
 	}
 
 	/**
-	 * Rengi bir kaba (kart ya da hızlı bakış içeriği) uygular.
+	 * Rengi karta uygular.
 	 *
-	 * @param {Element} kap     Kart ya da hızlı bakış içeriği.
+	 * @param {Element} kap     Kart.
 	 * @param {Object}  renk    Renk kaydı.
-	 * @param {string}  anahtar Görsel anahtarı: 'kart' | 'bakis'.
+	 * @param {string}  anahtar Görsel anahtarı: 'kart'.
 	 */
 	function renkUygula( kap, renk, anahtar ) {
 		kap.setAttribute( 'data-sb-secili', renk.slug );
@@ -70,7 +70,7 @@
 				a.setAttribute( 'tabindex', bu ? '0' : '-1' );
 			}
 		} );
-		var img = kap.querySelector( 'kart' === anahtar ? '.sb-mkart__ana' : '.sb-bakis__gorsel img' );
+		var img = kap.querySelector( '.sb-mkart__ana' );
 		gorselUygula( img, renk[ anahtar ], renk.yer_tutucu );
 		var ikinci = kap.querySelector( '[data-sb-ikinci]' );
 		if ( ikinci ) {
@@ -100,10 +100,6 @@
 				a.setAttribute( 'aria-disabled', 'true' );
 			}
 		} );
-		var bakisSepet = kap.querySelector( '[data-sb-bakis-sepete]' );
-		if ( bakisSepet ) {
-			bakisSepet.disabled = ! renk.stok;
-		}
 		Array.prototype.forEach.call( kap.querySelectorAll( '[data-sb-kart-hata]' ), function ( not ) {
 			not.textContent = renk.stok ? '' : 'Bu renk şu an tükendi.';
 		} );

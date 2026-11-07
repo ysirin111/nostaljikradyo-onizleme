@@ -32,7 +32,7 @@ ul.products::after {
 }
 
 /* ---------- Ürün kartı ----------
-   Kartın kendisi (görsel, renk noktaları, fiyat satırı, kalp, hızlı bakış) kart.css'te; burada yalnız
+   Kartın kendisi (görsel, renk noktaları, fiyat satırı, kalp) kart.css'te; burada yalnız
    ızgara hücresi ve ortak parçalar (ad, rozet). */
 ul.products li.sb-mkart {
 	width: auto;
@@ -762,5 +762,12 @@ ul.products > li.sb-mkart {
 
 	ul.products .sb-mkart__fiyat small {
 		display: none;
+	}
+
+	/* Sepet düğmesi olmayan kartta (tükenmiş ürün) fiyat düğmenin yerine inmesin: düğme yüksekliği + boşluk
+	   kadar alt pay; yanındaki kartın fiyatıyla aynı hizada kalır (mobil-duzen; varsayılan sıra değişince
+	   tükenmiş kart aralıklı fiyatlı kartın yanına düştü). */
+	ul.products .sb-mkart__satir:not(:has(.sb-mkart__sepet)) {
+		padding-bottom: 50px;
 	}
 }

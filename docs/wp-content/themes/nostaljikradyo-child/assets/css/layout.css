@@ -977,9 +977,35 @@
   }
 }
 
+/* Mobil (owner 2026-11-07 "2 sütun, daha düzenli"): marka ve İletişim tam satır, Alışveriş ile Kurumsal
+   yan yana; alt yasal şerit iki sütun, telif satırı üstte tam genişlik. */
 @media (max-width: 620px) {
   .sb-footer__ust {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 20px;
+    padding-block-start: 48px;
+  }
+
+  .sb-footer__iletisim {
+    grid-column: 1 / -1;
+  }
+
+  .sb-footer__alt {
+    display: block;
+  }
+
+  .sb-footer__telif {
+    margin-block-end: 8px;
+  }
+
+  .sb-footer__yasal .sb-footer__liste {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 20px;
+  }
+
+  .sb-footer__yasal a {
+    justify-content: flex-start;
   }
 }
 

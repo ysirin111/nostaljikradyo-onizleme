@@ -152,6 +152,59 @@
   min-block-size: var(--sb-dokunma, 44px);
 }
 
+/* ---------- İletişim: iki sütun (owner 2026-11-07) ----------
+   Sol: "Satıcı bilgileri" + künye; sağ: "Bize yazın" + form. İçerik kurulumun yapısıdır (h2, dl.sb-kunye,
+   h2, .sb-iletisim-formu; template-parts/sayfa.php sınıfı basar). Sütunlar yalnız künye ve form ikisi de
+   varsa açılır; personelin eklediği başka blok iki sütunun altında tam genişlikte kalır. */
+@media (min-width: 992px) {
+  .sb-sayfa--iletisim .sb-sayfa__icerik:has(> .sb-kunye):has(> .sb-iletisim-formu) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "kunye-baslik form-baslik"
+      "kunye form";
+    align-items: start;
+    column-gap: clamp(40px, 5vw, 88px);
+  }
+
+  /* Izgara öğesinde çekirdeğin margin-inline: auto !important'ı kutuyu içeriği kadar daraltır: tam genişlik. */
+  .sb-sayfa--iletisim .sb-sayfa__icerik:has(> .sb-iletisim-formu) > * {
+    grid-column: 1 / -1;
+    box-sizing: border-box;
+    inline-size: 100%;
+    max-width: none;
+  }
+
+  .sb-sayfa--iletisim .sb-sayfa__icerik:has(> .sb-iletisim-formu) > h2 {
+    text-align: start;
+  }
+
+  .sb-sayfa--iletisim .sb-sayfa__icerik:has(> .sb-iletisim-formu) > h2:first-of-type {
+    grid-area: kunye-baslik;
+    margin-top: 0;
+  }
+
+  .sb-sayfa--iletisim .sb-sayfa__icerik:has(> .sb-iletisim-formu) > .sb-kunye {
+    grid-area: kunye;
+    margin-bottom: 0;
+  }
+
+  .sb-sayfa--iletisim .sb-sayfa__icerik:has(> .sb-iletisim-formu) > h2:nth-of-type(2) {
+    grid-area: form-baslik;
+    margin-top: 0;
+  }
+
+  .sb-sayfa--iletisim .sb-sayfa__icerik:has(> .sb-iletisim-formu) > .sb-iletisim-formu {
+    grid-area: form;
+    max-inline-size: none;
+  }
+
+  /* Yarım sütunda künye etiketi daha dar: değer sütunu sıkışmasın. */
+  .sb-sayfa--iletisim .sb-sayfa__icerik .sb-kunye {
+    grid-template-columns: minmax(0, 170px) minmax(0, 1fr);
+  }
+}
+
 /* İletişim formu çerçeveli kart (owner isteği 2026-10-01): ince çerçeve, header kartıyla aynı yuvarlak köşe,
    içeride rahat iç boşluk. Çerçeve ≥ 3:1 (WCAG 1.4.11 yalnız etkileşimli sınır için; bu süs çerçevesi). */
 .sb-iletisim-formu {
@@ -389,52 +442,138 @@ html .fluentform .ff-el-form-control:focus-visible {
 }
 
 /* ---------- Kurumsal Hediyeler (page-templates/kurumsal.php; inc/sayfa.php kısa kodları) ----------
-   Tanıtım, referans galerisi, teklif formu ve telefonlar tek sütunda; galeri dar ekranda iki,
-   992 px ve üstünde beş sütun. Telefon bağlantıları ≥ 44 px dokunma hedefi. */
-.sb-sayfa--kurumsal .sb-sayfa__icerik > :is(section, p) {
-  max-inline-size: 900px;
-  margin-inline: auto;
+   Owner 2026-11-07 "ürünleri öne çıkar": giriş → logolu radyo vitrini (ilk örnek büyük) → teklif (992 px
+   üstünde telefon kartı solda ve yapışkan, form sağda). Modeller bölümü aynı gün kaldırıldı. Bölümler içerikteki
+   kısa kodlardan gelir; personelin eklediği başka blok tam genişlikte kalır. Telefon bağlantıları
+   ≥ 44 px dokunma hedefi. Ana sayfanın belirteçleri (--sb-ease, --sb-golge-kart) burada yüklenmez:
+   yedek değerleri yazılıdır. */
+.sb-sayfa--kurumsal {
+  --sb-kurumsal-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --sb-kurumsal-golge: 0 1px 2px rgba(36, 31, 26, 0.05), 0 18px 36px -24px rgba(36, 31, 26, 0.35);
+}
+
+.sb-sayfa--kurumsal .sb-sayfa__icerik > p:first-child {
+  max-inline-size: 60ch;
+  margin-block: 0;
+  /* Çekirdeğin kısıtlı düzeni çocuklara margin-inline: auto !important verir (ortalar); giriş sola yaslı. */
+  margin-inline-start: 0 !important;
+  /* Yazı boyu ve rengi sayfa gövdesininki (owner 2026-11-07: büyütülmüş giriş sitenin geri kalanına uymuyordu). */
+  text-wrap: pretty;
 }
 
 .sb-kurumsal-referans,
 .sb-kurumsal-form,
 .sb-kurumsal-telefonlar {
-  margin-block-start: clamp(36px, 5vw, 64px);
+  margin-block-start: clamp(48px, 7vw, 96px);
 }
 
+.sb-sayfa--kurumsal .sb-kurumsal-referans > h2 {
+  margin: 0;
+  font-size: clamp(30px, 3.2vw, 46px);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+/* Vitrin: ilk örnek iki sütun × iki satır, kalan dördü yanında. Dar ekranda iki sütun, ilk örnek tam satır. */
 .sb-kurumsal-referans__izgara {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px 16px;
-  margin: 20px 0 0;
+  gap: 28px 16px;
+  margin: 28px 0 0;
   padding: 0;
   list-style: none;
 }
 
-.sb-kurumsal-referans__oge figure {
-  margin: 0;
-  text-align: center;
+.sb-kurumsal-referans__oge--one-cikan {
+  grid-column: 1 / -1;
 }
 
-.sb-kurumsal-referans__oge img {
-  inline-size: 100%;
+.sb-kurumsal-referans__oge figure {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  margin: 0;
+}
+
+.sb-kurumsal-referans__gorsel {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--wp--preset--color--urun-zemin);
+}
+
+.sb-kurumsal-referans__gorsel img {
+  inline-size: 92%;
   block-size: auto;
-  border-radius: 6px;
-  background: var(--wp--preset--color--zemin);
+  mix-blend-mode: multiply;
+  transition: transform 0.8s var(--sb-kurumsal-ease);
+}
+
+.sb-kurumsal-referans__oge:hover .sb-kurumsal-referans__gorsel img {
+  transform: scale(1.04);
 }
 
 .sb-kurumsal-referans__oge figcaption {
-  margin-block-start: 8px;
-  color: var(--wp--preset--color--metin);
-  font-size: var(--wp--preset--font-size--kucuk);
+  display: flex;
+  text-align: start;
+  flex-direction: column;
+  gap: 2px;
+  margin-block-start: 12px;
   line-height: var(--sb-satir-arayuz);
+}
+
+.sb-kurumsal-referans__oge figcaption b {
+  color: var(--wp--preset--color--metin);
+  font-weight: 500;
+}
+
+.sb-kurumsal-referans__oge figcaption span {
+  color: var(--wp--preset--color--metin-ikincil);
+  font-size: var(--wp--preset--font-size--kucuk);
+}
+
+.sb-kurumsal-referans__oge--one-cikan figcaption b {
+  font-size: clamp(20px, 1.8vw, 26px);
+  letter-spacing: -0.01em;
+}
+
+/* Teklif: form çerçeveli kart (İletişim formuyla aynı), telefonlar koyu yeşil kart. */
+.sb-kurumsal-form {
+  box-sizing: border-box;
+  padding: clamp(24px, 4vw, 48px);
+  border: 1px solid var(--wp--preset--color--kenarlik);
+  border-radius: 16px;
+  background: var(--wp--preset--color--yuzey-sicak);
+  scroll-margin-top: calc(var(--sb-header-sabit, 78px) + 16px);
+}
+
+.sb-sayfa__icerik .sb-kurumsal-form > h2 {
+  margin-top: 0;
+}
+
+.sb-kurumsal-telefonlar {
+  box-sizing: border-box;
+  padding: clamp(28px, 3.5vw, 44px);
+  border-radius: 16px;
+  background: var(--wp--preset--color--koyu-dolgu);
+  color: var(--wp--preset--color--aksan-uzeri);
+}
+
+.sb-sayfa__icerik .sb-kurumsal-telefonlar > h2 {
+  margin: 0;
+  color: var(--wp--preset--color--aksan-uzeri);
 }
 
 .sb-kurumsal-telefonlar__liste {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px 28px;
-  margin-block-start: 12px;
+  gap: 16px 36px;
+  margin-block-start: 20px;
 }
 
 .sb-sayfa__icerik a.sb-kurumsal-telefon {
@@ -442,26 +581,70 @@ html .fluentform .ff-el-form-control:focus-visible {
   flex-direction: column;
   justify-content: center;
   min-block-size: 44px;
+  color: var(--wp--preset--color--aksan-uzeri);
   text-decoration: none;
 }
 
 .sb-kurumsal-telefon small {
-  color: var(--wp--preset--color--metin-ikincil);
+  color: var(--wp--preset--color--altin);
   font-size: var(--wp--preset--font-size--kucuk);
 }
 
 .sb-kurumsal-telefon b {
-  font-weight: 500;
+  font-size: clamp(20px, 1.7vw, 24px);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.sb-sayfa__icerik a.sb-kurumsal-telefon:hover b {
   text-decoration: underline;
-  text-underline-offset: 3px;
+  text-underline-offset: 4px;
+}
+
+.sb-sayfa__icerik .sb-kurumsal-telefonlar a:focus-visible {
+  outline-color: var(--wp--preset--color--aksan-uzeri);
 }
 
 @media (min-width: 992px) {
-  .sb-sayfa--kurumsal .sb-sayfa__icerik > .sb-kurumsal-referans {
-    max-inline-size: none;
+  .sb-kurumsal-referans__izgara {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 32px 24px;
   }
 
-  .sb-kurumsal-referans__izgara {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+  .sb-kurumsal-referans__oge--one-cikan {
+    grid-column: 1 / 3;
+    grid-row: 1 / 3;
+  }
+
+  /* Teklif iki sütun: telefon kartı solda (yapışkan), form sağda. Yalnız ikisi de basılmışsa. */
+  .sb-sayfa--kurumsal .sb-sayfa__icerik:has(> .sb-kurumsal-form):has(> .sb-kurumsal-telefonlar) {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    grid-auto-flow: row dense;
+    column-gap: clamp(32px, 4vw, 64px);
+    align-items: start;
+  }
+
+  /* Izgara öğesinde çekirdeğin margin-inline: auto !important'ı kutuyu içeriği kadar daraltır: tam genişlik. */
+  .sb-sayfa--kurumsal .sb-sayfa__icerik:has(> .sb-kurumsal-telefonlar) > * {
+    grid-column: 1 / -1;
+    box-sizing: border-box;
+    inline-size: 100%;
+  }
+
+  .sb-sayfa--kurumsal .sb-sayfa__icerik:has(> .sb-kurumsal-telefonlar) > p:first-child {
+    inline-size: auto;
+  }
+
+  .sb-sayfa--kurumsal .sb-sayfa__icerik:has(> .sb-kurumsal-telefonlar) > .sb-kurumsal-form {
+    grid-column: 2;
+  }
+
+  .sb-sayfa--kurumsal .sb-sayfa__icerik:has(> .sb-kurumsal-form) > .sb-kurumsal-telefonlar {
+    position: sticky;
+    top: calc(var(--sb-header-sabit, 78px) + var(--admin-bar, 0px) + 24px);
+    /* dense akış: formun satırındaki boş sol hücreye yerleşir (içerikte formdan sonra gelir). */
+    grid-column: 1;
   }
 }

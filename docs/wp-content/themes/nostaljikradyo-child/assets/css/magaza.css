@@ -1,0 +1,766 @@
+/*
+ * Mağaza görünümü (Görev 8): ürün ızgarası ve kartı, arşiv bandı, araç çubuğu,
+ * filtre kenar çubuğu ve mobil çekmecesi, sayfalama, boş durumlar, renk seçicisi
+ * etiketi. Renkler spec §4.1 token'ları (theme.json paleti →
+ * --wp--preset--color--<ad>); virgülden sonraki değer aynı token'ın değeridir.
+ * Kırılımlar (min-width): 768 / 992 / 1280 / 1600. Mobil önce yazılır.
+ */
+
+/* ---------- Ürün ızgarası (arşiv, ana sayfa, ilgili ürünler, beğenilenler) ---------- */
+ul.products {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 40px 20px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+ul.products::before,
+ul.products::after {
+	content: none;
+}
+
+@media (min-width: 992px) {
+	ul.products.columns-3 {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	ul.products.columns-4 {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+}
+
+/* ---------- Ürün kartı ----------
+   Kartın kendisi (görsel, renk noktaları, fiyat satırı, kalp, hızlı bakış) kart.css'te; burada yalnız
+   ızgara hücresi ve ortak parçalar (ad, rozet). */
+ul.products li.sb-mkart {
+	width: auto;
+	float: none;
+	margin: 0;
+}
+
+.sb-kart__ad {
+	grid-area: ad;
+	margin: 15px 0 0;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.4;
+	letter-spacing: 0;
+	text-transform: none;
+}
+
+/* Bağımsız bağlantı: dokunma alanı 44 px (spec §4.1), görünen satır aynı. */
+.sb-kart__ad a {
+	display: block;
+	margin: -11px 0;
+	padding: 11px 0;
+	color: var(--wp--preset--color--metin, #333333);
+	text-decoration: none;
+}
+
+.sb-kart__ad a:hover {
+	color: var(--wp--preset--color--aksan-koyu, #7d6e55);
+}
+
+.sb-kart .price {
+	grid-area: fiyat;
+	display: block;
+	margin: 5px 0 0;
+	font-size: 18px;
+	line-height: 1.4;
+	color: var(--wp--preset--color--metin-ikincil, #6a6a6a);
+}
+
+.sb-rozet {
+	padding: 4px 10px;
+	border-radius: 6px;
+	font-size: 12px;
+	line-height: 1.4;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--wp--preset--color--metin, #333333);
+	background: var(--wp--preset--color--zemin, #ffffff);
+}
+
+/* ---------- Araç çubuğu: sonuç sayısı, Filtrele, sıralama ---------- */
+.sb-arsiv__icerik:focus {
+	outline: none;
+}
+
+.sb-arac {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px 20px;
+	margin: 0 0 30px;
+	padding: 8px 20px;
+	background: var(--wp--preset--color--yuzey-sicak, #fcfbfa);
+}
+
+.sb-arac .woocommerce-result-count {
+	margin: 0;
+	font-size: 14px;
+	color: var(--wp--preset--color--metin-ikincil, #6a6a6a);
+}
+
+.sb-arac .woocommerce-ordering {
+	margin: 0 0 0 auto;
+}
+
+.sb-arac .woocommerce-ordering select {
+	min-height: 44px;
+	padding: 0 32px 0 12px;
+	font-size: 14px;
+	color: var(--wp--preset--color--metin, #333333);
+	background-color: transparent;
+	border: 1px solid var(--wp--preset--color--kenarlik, #dedede);
+	border-radius: 0;
+}
+
+.sb-arac .sb-arac__filtre {
+	min-height: 44px;
+}
+
+/* Mobilde sonuç sayısı gizli; sıralama sağa itilip solda boşluk bırakıyordu (asimetri): tam genişlik. */
+@media (max-width: 767px) {
+	.sb-arac .woocommerce-ordering {
+		flex: 1 1 200px;
+		margin: 0;
+	}
+
+	.sb-arac .woocommerce-ordering select {
+		width: 100%;
+	}
+}
+
+@media (min-width: 992px) {
+	.sb-arac .sb-arac__filtre {
+		display: none;
+	}
+}
+
+/* ---------- Boş durumlar (üçü ayrı mesajla; yeşil onay ikonu yok, spec §4.5) ---------- */
+.sb-arsiv__bos {
+	max-width: 560px;
+	margin: 20px auto 60px;
+	text-align: center;
+}
+
+.sb-arsiv__bos-baslik {
+	margin: 0 0 10px;
+	font-size: clamp(20px, 3vw, 24px);
+	font-weight: 400;
+	line-height: 1.2;
+	color: var(--wp--preset--color--metin, #333333);
+}
+
+.sb-arsiv__bos-metin {
+	margin: 0 0 20px;
+	color: var(--wp--preset--color--metin-govde, #747474);
+}
+
+.sb-bos__arama {
+	display: flex;
+	gap: 10px;
+	margin: 0 0 20px;
+}
+
+.sb-bos__arama input[type="search"] {
+	flex: 1 1 auto;
+	min-width: 0;
+	min-height: 44px;
+	padding: 0 12px;
+	border: 1px solid var(--wp--preset--color--kenarlik, #dedede);
+	border-radius: 0;
+}
+
+.sb-bos__arama .sb-btn,
+.sb-arsiv__bos > .sb-btn {
+	min-width: 44px;
+	min-height: 44px;
+}
+
+/* ---------- Arşiv gövdesi: ızgara + sağda filtre (spec §4.1: ≥992 4 sütun ya da 3 + filtre) ---------- */
+.sb-arsiv__govde {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 60px 40px;
+	padding-bottom: 80px;
+}
+
+@media (min-width: 992px) {
+	.sb-arsiv__govde--filtreli {
+		grid-template-columns: minmax(0, 1fr) 260px;
+	}
+
+	.sb-arsiv__govde ul.products {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+
+	.sb-arsiv__govde--filtreli ul.products {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+/* ---------- Filtre grupları (kenar çubuğu ve çekmece ortak) ---------- */
+.sb-filtre__grup {
+	margin: 0 0 30px;
+	padding: 0 0 30px;
+	border-bottom: 1px solid var(--wp--preset--color--kenarlik, #dedede);
+}
+
+.sb-filtre__grup:last-child {
+	margin-bottom: 0;
+	border-bottom: 0;
+}
+
+.sb-filtre__baslik {
+	margin: 0 0 10px;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.4;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--wp--preset--color--metin, #333333);
+}
+
+.sb-filtre .woocommerce-widget-layered-nav-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.sb-filtre .wc-layered-nav-term {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.sb-filtre .wc-layered-nav-term a {
+	display: flex;
+	flex: 1 1 auto;
+	align-items: center;
+	min-height: 44px;
+	color: var(--wp--preset--color--metin, #333333);
+	text-decoration: none;
+}
+
+.sb-filtre .wc-layered-nav-term a:hover,
+.sb-filtre .wc-layered-nav-term a:focus-visible {
+	color: var(--wp--preset--color--aksan-koyu, #7d6e55);
+}
+
+.sb-filtre .wc-layered-nav-term.chosen a {
+	font-weight: 600;
+	text-decoration: underline;
+	text-decoration-color: var(--wp--preset--color--aksan, #c3b8a5);
+	text-decoration-thickness: 2px;
+	text-underline-offset: 4px;
+}
+
+.sb-filtre .wc-layered-nav-term .count {
+	font-size: 12px;
+	color: var(--wp--preset--color--metin-ikincil, #6a6a6a);
+}
+
+.sb-filtre__renk {
+	flex: 0 0 auto;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+
+/* Fiyat: jQuery UI kaydırıcısı (WC price-slider.js). Tutamaç kutusu 44×44, görünen
+   nokta 16 px (Mober ölçüsü, rep-tokens.md). */
+.sb-filtre .price_slider {
+	position: relative;
+	height: 2px;
+	margin: 26px 11px 30px;
+	background: #d8d8d8;
+}
+
+.sb-filtre .price_slider .ui-slider-range {
+	position: absolute;
+	top: 0;
+	height: 100%;
+	background: var(--wp--preset--color--aksan, #c3b8a5);
+}
+
+.sb-filtre .price_slider .ui-slider-handle {
+	position: absolute;
+	top: 50%;
+	z-index: 2;
+	width: 44px;
+	height: 44px;
+	margin-left: -22px;
+	background: transparent;
+	border: 0;
+	transform: translateY(-50%);
+	cursor: grab;
+	touch-action: none;
+}
+
+.sb-filtre .price_slider .ui-slider-handle::before {
+	content: "";
+	position: absolute;
+	inset: 14px;
+	border-radius: 50%;
+	background: #ffffff;
+	box-shadow: inset 0 0 0 4px var(--wp--preset--color--aksan, #c3b8a5), 0 0 0 1px #d8d8d8;
+}
+
+.sb-filtre .price_slider .ui-slider-handle:focus-visible {
+	outline: 2px solid var(--wp--preset--color--metin, #333333);
+	outline-offset: -8px;
+}
+
+.sb-filtre .price_slider_amount {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.sb-filtre .price_slider_amount input {
+	width: 45%;
+	min-height: 44px;
+	padding: 0 10px;
+	border: 1px solid var(--wp--preset--color--kenarlik, #dedede);
+	border-radius: 0;
+}
+
+.sb-filtre .price_slider_amount .button {
+	min-width: 44px;
+	min-height: 44px;
+	padding: 0 20px;
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--wp--preset--color--metin, #333333);
+	background: var(--wp--preset--color--zemin, #ffffff);
+	border: 1px solid var(--wp--preset--color--kenarlik, #dedede);
+	border-radius: 0;
+}
+
+.sb-filtre .price_label {
+	font-size: 14px;
+	color: var(--wp--preset--color--metin-ikincil, #6a6a6a);
+}
+
+.sb-filtre .price_slider_amount .clear {
+	display: none;
+}
+
+/* Masaüstünde kenar çubuğu: çekmece başlığı yalnız ekran okuyucuya, Kapat ve alt
+   düğmeler yok. */
+@media (min-width: 992px) {
+	.sb-filtre__ust-baslik {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	.sb-filtre__kapat,
+	.sb-filtre__alt {
+		display: none;
+	}
+}
+
+/* ---------- Mobil filtre çekmecesi (<992) ----------
+   Görev 6'nın katman deseni (layout.css .sb-cekmece): dış katman sabit ve tık almaz,
+   panel soldan kayar; açık durum nav.js'in data-acik'i, JS yokken :target. Sayfa
+   kararmaz (Mober), kaydırma kilitlenmez. */
+.sb-filtre {
+	position: fixed;
+	inset: 0;
+	z-index: 200;
+	visibility: hidden;
+	pointer-events: none;
+	transition: visibility 0s linear 0.3s;
+}
+
+.sb-filtre[data-acik],
+.sb-filtre:target {
+	visibility: visible;
+	transition-delay: 0s;
+}
+
+.sb-filtre__panel {
+	position: absolute;
+	top: var(--admin-bar, 0px);
+	bottom: 0;
+	left: 0;
+	display: flex;
+	flex-direction: column;
+	width: min(360px, 90vw);
+	background: var(--wp--preset--color--zemin, #ffffff);
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+	pointer-events: auto;
+	transform: translateX(-100%);
+	transition: transform 0.3s ease;
+}
+
+.sb-filtre[data-acik] .sb-filtre__panel,
+.sb-filtre:target .sb-filtre__panel {
+	transform: none;
+}
+
+.sb-filtre__ust {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 6px 12px 6px 24px;
+	border-bottom: 1px solid var(--wp--preset--color--kenarlik, #dedede);
+}
+
+.sb-filtre__ust-baslik {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 500;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+}
+
+.sb-filtre__kapat {
+	padding: 0 10px;
+	font-size: 14px;
+}
+
+.sb-filtre__gruplar {
+	flex: 1 1 auto;
+	padding: 24px;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+
+.sb-filtre__alt {
+	display: flex;
+	gap: 10px;
+	padding: 16px 24px;
+	border-top: 1px solid var(--wp--preset--color--kenarlik, #dedede);
+}
+
+.sb-filtre__alt .sb-btn {
+	flex: 1 1 0;
+	justify-content: center;
+	min-height: 44px;
+	text-align: center;
+}
+
+@media (min-width: 992px) {
+	.sb-filtre {
+		position: static;
+		visibility: visible;
+		pointer-events: auto;
+		transition: none;
+	}
+
+	.sb-filtre__panel {
+		position: static;
+		display: block;
+		width: auto;
+		background: none;
+		box-shadow: none;
+		transform: none;
+		transition: none;
+	}
+
+	.sb-filtre__ust {
+		display: block;
+		padding: 0;
+		border: 0;
+	}
+
+	.sb-filtre__gruplar {
+		padding: 0;
+		overflow: visible;
+	}
+
+	.sb-filtre__alt {
+		display: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sb-filtre,
+	.sb-filtre__panel {
+		transition: none;
+	}
+}
+
+/* ---------- Sayfalama: 44×44 kareler, gerçek bağlantılar (spec §4.2) ----------
+   Etkin sayfa kum dolgu üstünde #333 (Mober'in kum üstü beyazı 1,96:1, kopyalanmaz). */
+.sb-sayfalama {
+	margin-top: 60px;
+}
+
+.sb-sayfalama ul.page-numbers {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.sb-sayfalama .page-numbers:not(ul) {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 44px;
+	min-height: 44px;
+	padding: 0 8px;
+	font-size: 16px;
+	line-height: 1;
+	color: var(--wp--preset--color--metin-govde, #747474);
+	text-decoration: none;
+	border: 1px solid transparent;
+}
+
+.sb-sayfalama a.page-numbers:hover,
+.sb-sayfalama a.page-numbers:focus-visible,
+.sb-sayfalama .page-numbers.current {
+	color: var(--wp--preset--color--aksan-uzeri, #333333);
+	background: var(--wp--preset--color--aksan, #c3b8a5);
+}
+
+.sb-sayfalama .page-numbers.dots {
+	border: 0;
+}
+
+/* ---------- Renk seçicisi: rengin adı swatch'ın altında (sb_swatch_etiketi) ----------
+   Eklenti öğeyi --wvs-single-product-item-width/height (44 px, site/kur/60) ile sabit
+   kutu çiziyor ve içini renk kutusuna ayırıyor. Ad kutunun dışına, altına konur; seçim
+   alanı 44×44 kalır, ada tıklamak da seçer (olay öğeye kabarcıklanır). Stil ürün
+   sayfasında magaza.css ile gelir (ilgili ürün kartları için zaten yüklü). */
+body.woo-variation-swatches .variable-items-wrapper .variable-item.color-variable-item {
+	margin: 4px 14px 30px 4px;
+}
+
+/* Swatch'ın klavye odak halkası (Görev 12 incelemesi): eklenti öğeye outline: none veriyor
+   (frontend.css:711, 0,3,0) ve genel halkayı (base.css) yeniyor; seçili swatch'ın siyah çerçevesi
+   odakta hiç değişmiyordu, seçili olmayanınki açık gri (1,36:1). */
+body.woo-variation-swatches .variable-items-wrapper .variable-item:focus-visible {
+	outline: 2px solid var(--sb-odak-rengi, var(--wp--preset--color--metin, #333333));
+	outline-offset: 3px;
+}
+
+body.woo-variation-swatches .variable-items-wrapper .variable-item .sb-swatch-ad {
+	position: absolute;
+	top: calc(100% + 6px);
+	left: 50%;
+	font-size: 12px;
+	line-height: 1.4;
+	white-space: nowrap;
+	color: var(--wp--preset--color--metin, #333333);
+	transform: translateX(-50%);
+}
+
+/* Tükenmiş değer (Görev 12, spec §6.4; sb_swatch_etiketi): adın altında "Tükendi". Eklenti kapalı
+   öğenin bütün <span>'lerini ve içeriğini %60 soldurur (woo-variation-swatches frontend.css:812,
+   :hover dahil); yalnız renk kutusu ve düğme metni solar, ad ve "Tükendi" AA'da okunur kalır. */
+body.woo-variation-swatches .variable-items-wrapper .variable-item .sb-swatch-durum {
+	display: block;
+	color: var(--wp--preset--color--metin-ikincil, #6a6a6a);
+}
+
+/* Seçime göre kapanan swatch'lar için nitelik satırında tek açıklama (sb_swatch_aciklamasi): yalnız
+   satırda "Tükendi" yazmayan (sb-tukendi olmayan) kapalı öğe varken görünür. */
+body.woo-variation-swatches .sb-swatch-aciklama {
+	display: none;
+	margin: 0 0 8px;
+	font-size: 14px;
+	line-height: 1.4;
+	color: var(--wp--preset--color--metin-ikincil, #6a6a6a);
+}
+
+body.woo-variation-swatches .variable-items-wrapper:has(.variable-item.disabled:not(.sb-tukendi)) ~ .sb-swatch-aciklama {
+	display: block;
+}
+
+/* Kapalı öğe tıklanamaz: eklenti tık işleyicisinde disabled'ı dışlamıyor (yalnız klavyede,
+   frontend.js:385); tık kapalı değeri select'e yazıyor, jQuery kapalı seçeneği okumuyor ve
+   önceki seçim boşalıyordu (Görev 12'de ölçüldü). Eklentinin kendi kuralı yorumda (:807). */
+body.woo-variation-swatches .variable-items-wrapper .variable-item:not(.radio-variable-item).disabled {
+	pointer-events: none;
+}
+
+body.woo-variation-swatches .variable-items-wrapper .variable-item.color-variable-item:has(.sb-swatch-durum) {
+	margin-bottom: 48px;
+}
+
+body.woo-variation-swatches .variable-items-wrapper .variable-item.button-variable-item:has(.sb-swatch-durum) {
+	margin-bottom: 30px;
+}
+
+body.woo-variation-swatches .variable-items-wrapper .variable-item:not(.radio-variable-item).disabled .variable-item-contents,
+body.woo-variation-swatches .variable-items-wrapper .variable-item:not(.radio-variable-item).disabled:hover .variable-item-contents,
+body.woo-variation-swatches .variable-items-wrapper .variable-item:not(.radio-variable-item).disabled :is(.sb-swatch-ad, .sb-swatch-ad .sb-swatch-durum),
+body.woo-variation-swatches .variable-items-wrapper .variable-item:not(.radio-variable-item).disabled:hover :is(.sb-swatch-ad, .sb-swatch-ad .sb-swatch-durum) {
+	opacity: 1;
+}
+
+/* ---------- Ortak bölüm başlığı ve kaydırmalı ürün şeridi ----------
+   Ana sayfanın ürün şeridi (Görev 7) ve ürün sayfasının ilgili ürünler şeridi (Görev 9)
+   aynı işaretlemeyi ve serit.js'i kullanır; iki sayfada da magaza.css yüklü
+   (inc/assets.php sb_stil_haritasi). anasayfa.css'ten taşındı (Görev 9). */
+.sb-bolum-ust {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+	margin-bottom: 40px;
+}
+
+.sb-bolum-baslik {
+	margin: 0 0 40px;
+	color: var(--wp--preset--color--metin, #333);
+	font-size: clamp(1.625rem, 1.2rem + 1.6vw, 2.625rem);
+	font-weight: 400;
+	line-height: 1.2;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+}
+
+.sb-bolum-ust .sb-bolum-baslik {
+	margin-bottom: 0;
+}
+
+.sb-serit-bolum {
+	padding-block: 50px 80px;
+}
+
+.sb-serit__oklar {
+	display: flex;
+	gap: 10px;
+}
+
+.sb-serit__oklar[hidden] {
+	display: none;
+}
+
+/* Mobilde oklar yok: başlığın üstüne biniyordu (hallmark kapı 52); şerit parmakla kayar, yandaki kart
+   yarım görünür. */
+@media (max-width: 767px) {
+	.sb-serit__oklar {
+		display: none;
+	}
+}
+
+.sb-serit__ok {
+	display: inline-grid;
+	place-items: center;
+	width: 44px;
+	height: 44px;
+	padding: 0;
+	border: 1px solid var(--wp--preset--color--kenarlik, #dedede);
+	border-radius: 50%;
+	background: #fff;
+	color: var(--wp--preset--color--metin, #333);
+	font-size: 1.125rem;
+	cursor: pointer;
+	transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.sb-serit__ok:hover:not([aria-disabled="true"]) {
+	border-color: var(--wp--preset--color--aksan, #c3b8a5);
+	background: var(--wp--preset--color--aksan, #c3b8a5);
+}
+
+.sb-serit__ok[aria-disabled="true"] {
+	opacity: 0.45;
+	cursor: default;
+}
+
+.sb-serit-bolum ul.products.sb-serit__liste {
+	display: flex;
+	gap: 20px;
+	margin: 0;
+	padding: 0 0 10px;
+	list-style: none;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scroll-snap-type: x mandatory;
+	scroll-behavior: auto;
+}
+
+.sb-serit-bolum ul.products.sb-serit__liste::before,
+.sb-serit-bolum ul.products.sb-serit__liste::after {
+	content: none;
+}
+
+.sb-serit-bolum ul.products.sb-serit__liste > li.product {
+	flex: 0 0 80%;
+	width: auto;
+	margin: 0;
+	float: none;
+	scroll-snap-align: start;
+}
+
+/* Şerit bir kaydırma kabı (overflow-x: auto → overflow-y de auto): dışa taşan odak halkası
+   kırpılıyordu (Görev 12 odak taraması). Halka öğenin içine çizilir. */
+.sb-serit-bolum ul.products.sb-serit__liste :is(a, button):focus-visible {
+	outline-offset: -2px;
+}
+
+@media (min-width: 768px) {
+	.sb-serit-bolum ul.products.sb-serit__liste > li.product {
+		flex-basis: calc((100% - 20px) / 2);
+	}
+}
+
+@media (min-width: 992px) {
+	.sb-serit-bolum ul.products.sb-serit__liste > li.product {
+		flex-basis: calc((100% - 60px) / 4);
+	}
+}
+
+.sb-begeni[aria-pressed="true"] .sb-ikon {
+	fill: currentColor;
+}
+
+/* Arşiv sonuçları yenilenirken (arsiv.js) soluk ve tıklanamaz; erişilebilir durum aria-busy'de. */
+.sb-arsiv--yukleniyor {
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+/* Sayfalama tıkında sonuçların başına kayarken sabit header'ın altında kalmasın. */
+.sb-arsiv__icerik {
+  scroll-margin-top: calc(var(--sb-header-sabit, 78px) + 16px);
+}
+
+/* Arşiv ızgarasındaki model kartı (kart.css) ızgara hücresini doldurur; fiyat/düğme satırı hizalı kalsın. */
+ul.products > li.sb-mkart {
+	min-width: 0;
+}
+
+/* Dar ekranda (iki sütun) arşiv kartının fiyatı düğmenin üstüne iner: fiyat en çok iki satır, düğme altta.
+   Satır sabit en az yükseklikte ve içerik alta yaslı: aynı sıradaki kartların (basit ürün, aralıklı
+   fiyatlı değişken ürün) fiyat altı ve düğme üstü hizalı kalır (mobil-duzen). "· N renk" renk
+   noktalarında zaten görünür. */
+@media (max-width: 619px) {
+	ul.products .sb-mkart__satir {
+		flex-direction: column;
+		flex-wrap: nowrap;
+		align-items: flex-end;
+		justify-content: flex-end;
+		min-height: 124px;
+	}
+
+	ul.products .sb-mkart__fiyat {
+		align-self: stretch;
+	}
+
+	ul.products .sb-mkart__fiyat small {
+		display: none;
+	}
+}

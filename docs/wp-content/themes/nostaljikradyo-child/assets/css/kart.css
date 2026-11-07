@@ -1,0 +1,556 @@
+/* Model kartı ve hızlı bakış (template-parts/kart.php): ana sayfa, arşivler, arama, ilgili ürünler,
+   sepet çapraz satışları ve Beğenilenler. Görev 8'de anasayfa.css'ten taşındı. */
+
+/* ---------- Model kartı (template-parts/kart.php) ---------- */
+/* Odakla kaydırmada (geri sekme dahil) kartın denetimleri yapışkan header'ın altında kalmasın
+   (kalite odak turu "örtülü"; magaza.css .sb-arsiv__icerik emsali). */
+.sb-mkart a,
+.sb-mkart button {
+  scroll-margin-top: calc(var(--sb-header-sabit, 78px) + 16px);
+}
+
+.sb-mkart {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 10px 10px 16px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: var(--sb-golge-kart);
+  transition: transform 0.45s var(--sb-ease), box-shadow 0.45s;
+}
+
+.sb-mkart:hover {
+  box-shadow: var(--sb-golge-kart-ust);
+  transform: translateY(-6px);
+}
+
+.sb-mkart__medya {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1 / 1.02;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--wp--preset--color--urun-zemin, #f1ede5);
+}
+
+.sb-mkart__gorsel {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.sb-mkart__ana {
+  width: 92%;
+  height: auto;
+  mix-blend-mode: multiply;
+  transition: transform 0.8s var(--sb-ease), opacity 0.35s;
+}
+
+.sb-mkart:hover .sb-mkart__ana {
+  transform: scale(1.05);
+}
+
+.sb-mkart--kapak .sb-mkart__medya {
+  aspect-ratio: 600 / 722;
+  background: #26282c;
+}
+
+.sb-mkart--kapak .sb-mkart__ana {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: normal;
+}
+
+.sb-mkart--dikey .sb-mkart__gorsel {
+  height: 100%;
+}
+
+.sb-mkart--dikey .sb-mkart__ana {
+  width: auto;
+  height: 84%;
+  max-width: none;
+}
+
+.sb-mkart__not {
+  position: absolute;
+  bottom: 62px;
+  left: 50%;
+  z-index: 2;
+  margin: 0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--wp--preset--color--metin, #241f1a);
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  translate: -50% 0;
+}
+
+.sb-mkart__not[hidden] {
+  display: none;
+}
+
+.sb-mkart__rozetler {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  display: flex;
+  gap: 6px;
+}
+
+.sb-mkart__rozetler .sb-rozet {
+  padding: 2px 9px;
+  border-radius: 3px;
+  background: var(--wp--preset--color--aksan, #1f3a2e);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.sb-mkart__kalp {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 3;
+}
+
+.sb-mkart__kalp .sb-begeni {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--wp--preset--color--metin, #241f1a);
+  cursor: pointer;
+}
+
+.sb-mkart__kalp .sb-begeni .sb-ikon {
+  box-sizing: content-box;
+  width: 15px;
+  height: 15px;
+  padding: 7.5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  transition: background-color 0.25s, color 0.25s;
+}
+
+.sb-mkart__kalp .sb-begeni:hover .sb-ikon {
+  background: var(--wp--preset--color--aksan, #1f3a2e);
+  color: #fff;
+}
+
+.sb-mkart__kalp .sb-begeni[aria-pressed="true"] .sb-ikon {
+  color: #b5473a;
+  fill: currentColor;
+}
+
+.sb-mkart__bakis {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.4);
+  color: var(--wp--preset--color--metin, #241f1a);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  opacity: 0;
+  translate: -50% 10px;
+  transition: opacity 0.4s var(--sb-ease), translate 0.4s var(--sb-ease), background-color 0.3s, color 0.3s;
+}
+
+.sb-mkart:hover .sb-mkart__bakis,
+.sb-mkart:focus-within .sb-mkart__bakis {
+  opacity: 1;
+  translate: -50% 0;
+}
+
+.sb-mkart__bakis:hover {
+  background: var(--wp--preset--color--aksan, #1f3a2e);
+  color: #fff;
+}
+
+@media (hover: none) {
+  .sb-mkart__bakis {
+    font-size: 13px;
+    opacity: 1;
+    translate: -50% 0;
+  }
+}
+
+.sb-mkart__govde {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 4px 0;
+}
+
+.sb-mkart__govde {
+  flex: 1; /* fiyat ve sepet satırı kartın altında hizalı: arşivde farklı türdeki kartlar aynı satıra düşer */
+}
+
+.sb-mkart .sb-kart__ad {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-transform: none;
+}
+
+.sb-mkart .sb-kart__ad a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.sb-mkart__alt {
+  margin: 0;
+  color: var(--wp--preset--color--metin-ikincil, #6e665d);
+  font-size: 13px;
+}
+
+.sb-renkler {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 6px -5.5px 0;
+}
+
+/* 44×44 dokunma alanı korunur; komşu alanlar köşelerinde 5 px kadar üst üste biner (yuvarlak alanların
+   görünür noktaları 39 px aralıkta), böylece 7 nokta 3 sütunlu arşiv ve 4 sütunlu ilgili ürün kartında
+   tek satıra sığar. Daha dar kartta (mobil, 992–1100) yine alta sarar. */
+.sb-renk {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-inline: -2.5px;
+  border-radius: 50%;
+}
+
+.sb-renk__nokta {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--sb-renk);
+  box-shadow: inset 0 0 0 1px rgba(36, 31, 26, 0.22);
+  transition: transform 0.25s var(--sb-ease), box-shadow 0.25s;
+}
+
+.sb-renk:hover .sb-renk__nokta {
+  transform: scale(1.18);
+}
+
+.sb-renk[aria-checked="true"] .sb-renk__nokta,
+.sb-renk[aria-current="true"] .sb-renk__nokta {
+  box-shadow: inset 0 0 0 1px rgba(36, 31, 26, 0.22), 0 0 0 2px #fff, 0 0 0 3.5px var(--wp--preset--color--aksan, #1f3a2e);
+}
+
+.sb-mkart__satir {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.sb-mkart--kapak .sb-mkart__satir,
+.sb-mkart--dikey .sb-mkart__satir {
+  padding-top: 8px;
+}
+
+.sb-mkart__fiyat {
+  color: var(--wp--preset--color--metin, #241f1a);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.sb-mkart__fiyat .price {
+  display: inline;
+  margin: 0;
+}
+
+.sb-mkart__fiyat .price,
+.sb-mkart__fiyat .amount {
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.sb-mkart__fiyat small {
+  margin-left: 2px;
+  color: var(--wp--preset--color--metin-ikincil, #6e665d);
+  font-size: 12.5px;
+  font-weight: 400;
+}
+
+.sb-mkart__sepet {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(36, 31, 26, 0.16);
+  border-radius: 50%;
+  color: var(--wp--preset--color--aksan, #1f3a2e);
+  transition: background-color 0.3s var(--sb-ease), border-color 0.3s, color 0.3s, transform 0.3s;
+}
+
+.sb-mkart__sepet:hover {
+  border-color: var(--wp--preset--color--aksan, #1f3a2e);
+  background: var(--wp--preset--color--aksan, #1f3a2e);
+  color: #fff;
+}
+
+.sb-mkart__sepet:active {
+  transform: scale(0.93);
+}
+
+.sb-mkart__sepet[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.sb-mkart__hata,
+.sb-bakis__hata {
+  margin: 6px 0 0;
+  color: var(--wp--preset--color--hata, #a63d31);
+  font-size: 13px;
+}
+
+.sb-mkart__hata:empty,
+.sb-bakis__hata:empty {
+  display: none;
+}
+
+@media (max-width: 620px) {
+  .sb-mkart .sb-kart__ad {
+    font-size: 17px;
+  }
+}
+
+/* ---------- Hızlı bakış (dialog#sb-hizli-bakis) ---------- */
+.sb-bakis {
+  width: 100%;
+  max-width: min(960px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  border: 0;
+  border-radius: 18px;
+  background: var(--wp--preset--color--zemin, #faf8f4);
+  box-shadow: 0 40px 90px -20px rgba(0, 0, 0, 0.6);
+  color: var(--wp--preset--color--metin, #241f1a);
+}
+
+.sb-bakis::backdrop {
+  background: rgba(14, 9, 6, 0.62);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.sb-bakis[open] {
+  animation: sb-bakis-gel 0.45s var(--sb-ease);
+}
+
+@keyframes sb-bakis-gel {
+  from { opacity: 0; transform: translateY(18px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.sb-bakis__kapat {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--wp--preset--color--metin, #241f1a);
+  cursor: pointer;
+}
+
+.sb-bakis__kapat:hover {
+  background: var(--wp--preset--color--aksan, #1f3a2e);
+  color: #fff;
+}
+
+.sb-bakis__izgara {
+  display: grid;
+}
+
+.sb-bakis__gorsel {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1 / 0.8;
+  background: var(--wp--preset--color--urun-zemin, #f1ede5);
+}
+
+.sb-bakis__gorsel img {
+  width: 92%;
+  height: auto;
+  mix-blend-mode: multiply;
+}
+
+.sb-bakis__not {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  margin: 0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  font-size: 13px;
+  font-weight: 500;
+  translate: -50% 0;
+}
+
+.sb-bakis__not[hidden] {
+  display: none;
+}
+
+.sb-bakis__bilgi {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: clamp(22px, 3vw, 40px);
+}
+
+.sb-bakis__baslik {
+  margin: 0;
+  padding-right: 40px;
+  font-size: clamp(26px, 3vw, 34px);
+}
+
+.sb-bakis__alt,
+.sb-bakis__aciklama p {
+  margin: 0;
+  color: var(--wp--preset--color--metin-ikincil, #6e665d);
+}
+
+.sb-bakis__aciklama p {
+  margin-top: 6px;
+  color: var(--wp--preset--color--metin-govde, #4b443c);
+  line-height: 1.7;
+}
+
+.sb-bakis__fiyat {
+  margin-top: 10px;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.sb-bakis__etiket {
+  display: flex;
+  gap: 8px;
+  margin: 14px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sb-bakis__etiket span {
+  color: var(--wp--preset--color--metin-ikincil, #6e665d);
+  font-weight: 400;
+}
+
+.sb-bakis__renkler .sb-renk__nokta {
+  width: 26px;
+  height: 26px;
+}
+
+.sb-bakis__al {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.sb-adet {
+  display: inline-flex;
+  align-items: center;
+  height: 52px;
+  border: 1px solid rgba(36, 31, 26, 0.16);
+  border-radius: 999px;
+  background: #fff;
+}
+
+.sb-adet__dugme {
+  width: 44px;
+  height: 52px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--wp--preset--color--metin-ikincil, #6e665d);
+  font-size: 19px;
+  cursor: pointer;
+}
+
+.sb-adet__deger {
+  min-width: 26px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.sb-bakis__sepet {
+  flex: 1;
+  min-width: 160px;
+  min-height: 52px;
+  border-radius: 999px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.sb-bakis__urun {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-height: 44px;
+  margin-top: 12px;
+  color: var(--wp--preset--color--aksan, #1f3a2e);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (min-width: 992px) {
+  .sb-bakis__izgara {
+    grid-template-columns: 1.05fr 1fr;
+  }
+
+  .sb-bakis__gorsel {
+    aspect-ratio: 1 / 0.95;
+  }
+}
+

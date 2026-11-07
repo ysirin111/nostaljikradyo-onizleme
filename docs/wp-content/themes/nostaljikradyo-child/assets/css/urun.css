@@ -1,0 +1,686 @@
+/* ==========================================================================
+   Ürün sayfası — woocommerce/content-single-product.php (Görev 9; spec §4.3)
+   Kırılımlar base.css ile aynı: 768 / 992 / 1280 (min-width). Görsel oranları
+   spec §4.1: ana görsel sahnesi 1:1 (tasarım; fotoğraf kırpılmadan sığar), küçük görseller 5:6. İlgili ürünler şeridi, bölüm
+   başlığı ve kırıntı yolunun ortak stili magaza.css'te. Kum rengi (aksan) metin
+   olarak kullanılmaz (spec §4.1). Dosyayı sb_stil_haritasi() ürün sayfasında yükler.
+   ========================================================================== */
+
+/* ---------- Kırıntı bandı (Mober: gri, ~60 px; header'ın hemen altında) ----------
+   yuzey üstünde metin-ikincil: 5,1:1. */
+.sb-urun__kirinti {
+	display: flex;
+	align-items: center;
+	min-block-size: 60px;
+	margin-block-end: 40px;
+	background: var(--wp--preset--color--yuzey, #f9f9f9);
+	color: var(--wp--preset--color--metin-ikincil, #6a6a6a);
+}
+
+.sb-urun__kirinti .sb-kirinti {
+	margin-top: 0;
+}
+
+/* ---------- Üst bölüm: galeri + özet ---------- */
+.sb-urun__ust {
+	display: grid;
+	gap: 40px;
+	margin-block-end: 80px;
+}
+
+@media (min-width: 992px) {
+	.sb-urun__ust {
+		grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+		align-items: start;
+		gap: 60px;
+	}
+}
+
+/* ---------- Galeri: dikey küçükler solda (mobilde de, Mober), 1:1 ana görsel sahnesi ---------- */
+.sb-urun__galeri {
+	display: grid;
+	grid-template-columns: 60px minmax(0, 1fr);
+	gap: 10px;
+}
+
+@media (min-width: 768px) {
+	.sb-urun__galeri {
+		grid-template-columns: 76px minmax(0, 1fr);
+		gap: 14px;
+	}
+}
+
+/* Masaüstünde galeri yapışkan (envanter §2): yapışkan header'ın altında kalır. */
+@media (min-width: 992px) {
+	.sb-urun__galeri {
+		position: sticky;
+		top: calc(var(--sb-header-sabit, 78px) + var(--admin-bar, 0px) + 26px);
+	}
+}
+
+/* Tek görselde şerit gizli (sunucu ya da urun-galeri.js); sütun da kalkar. */
+.sb-urun__galeri:has(> .sb-urun__kucukler[hidden]) {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+/* Şerit ana görselin yüksekliğini aşmaz, fazlası kendi içinde kayar: block-size 0 +
+   min-block-size 100% satır yüksekliğine katkı vermez, ona uyar. */
+.sb-urun__kucukler {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	block-size: 0;
+	min-block-size: 100%;
+	overflow-y: auto;
+	scrollbar-width: thin;
+}
+
+.sb-urun__kucukler[hidden] {
+	display: none;
+}
+
+.sb-urun__kucuk {
+	flex: 0 0 auto;
+	display: block;
+	inline-size: 100%;
+	aspect-ratio: 5 / 6;
+	padding: 0;
+	border: 1px solid transparent;
+	border-radius: calc(var(--sb-kart-radius, 16px) * 0.6);
+	overflow: hidden;
+	background: var(--wp--preset--color--urun-zemin, #f1ede5);
+	cursor: pointer;
+	transition: border-color var(--sb-sure-hizli, 0.2s);
+}
+
+.sb-urun__kucuk:hover,
+.sb-urun__kucuk[aria-current="true"] {
+	border-color: var(--wp--preset--color--metin, #333333);
+}
+
+.sb-urun__kucuk img {
+	display: block;
+	inline-size: 100%;
+	block-size: 100%;
+	object-fit: contain;
+	mix-blend-mode: multiply;
+}
+
+.sb-urun__sahne {
+	position: relative;
+	aspect-ratio: 1 / 1;
+	overflow: hidden;
+	border-radius: var(--sb-kart-radius, 16px);
+	background: var(--wp--preset--color--urun-zemin, #f1ede5);
+}
+
+/* "Görsel hazırlanıyor · Renk": yer tutucunun üstünde, altta ortada (açık hap, koyu metin 12:1). */
+.sb-urun__gorsel-notu {
+	position: absolute;
+	inset-inline: 12px;
+	inset-block-end: 12px;
+	z-index: 2;
+	margin: 0;
+	padding: 8px 14px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.92);
+	color: var(--wp--preset--color--metin, #241f1a);
+	font-size: 13.5px;
+	text-align: center;
+}
+
+.sb-urun__gorsel-notu[hidden] {
+	display: none;
+}
+
+.sb-urun__sahne .sb-urun__ana[hidden] {
+	display: none;
+}
+
+/* Yakınlaştırma: yalnız imleçli masaüstü (urun-galeri.js sınıfı da aynı ortamda ekler). */
+@media (hover: hover) and (pointer: fine) {
+	.sb-urun__sahne {
+		cursor: zoom-in;
+	}
+
+	.sb-urun__sahne--yakin .sb-urun__ana {
+		transform: scale(1.9);
+		transform-origin: var(--ox, 50%) var(--oy, 50%);
+		transition: transform 0.3s ease-out;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sb-urun__sahne--yakin .sb-urun__ana {
+		transition: none;
+	}
+}
+
+.sb-urun__sahne .sb-urun__ana {
+	position: absolute;
+	inset: 0;
+	inline-size: 100%;
+	block-size: 100%;
+	/* Ürün bütün görünür (kaynak fotoğraflar yatay 700×500; cover yanları kırpıyordu); boşluk sahne zemini. */
+	object-fit: contain;
+	mix-blend-mode: multiply; /* fotoğrafın beyaz zemini sahne zeminine karışır (kartlardaki gibi) */
+}
+
+.sb-urun__sahne > .sb-bilgi {
+	position: absolute;
+	inset-inline: 10px;
+	inset-block-end: 10px;
+}
+
+.sb-urun__ok {
+	position: absolute;
+	inset-block-start: 50%;
+	display: inline-grid;
+	place-items: center;
+	inline-size: 44px;
+	block-size: 44px;
+	padding: 0;
+	border: 1px solid var(--wp--preset--color--kenarlik, #dedede);
+	border-radius: 50%;
+	background: #ffffff;
+	color: var(--wp--preset--color--metin, #333333);
+	font-size: 1.125rem;
+	cursor: pointer;
+	transform: translateY(-50%);
+	transition: background-color var(--sb-sure-hizli, 0.2s), border-color var(--sb-sure-hizli, 0.2s);
+}
+
+.sb-urun__ok[hidden] {
+	display: none;
+}
+
+.sb-urun__ok--geri {
+	inset-inline-start: 10px;
+}
+
+.sb-urun__ok--ileri {
+	inset-inline-end: 10px;
+}
+
+.sb-urun__ok:hover {
+	border-color: var(--wp--preset--color--aksan, #c3b8a5);
+	background: var(--wp--preset--color--aksan, #c3b8a5);
+}
+
+/* ---------- Özet ---------- */
+.sb-urun__ad {
+	margin: 0 0 20px;
+	color: var(--wp--preset--color--metin, #333333);
+	font-size: clamp(1.5rem, 1.25rem + 0.6vw, 1.625rem);
+	font-weight: 400;
+}
+
+/* Alt başlık ve seçili renk. */
+.sb-urun__alt {
+	margin: -8px 0 14px;
+	color: var(--wp--preset--color--metin-ikincil, #6e665d);
+}
+
+.sb-urun__fiyat {
+	display: flex;
+	align-items: baseline;
+	gap: 12px;
+	margin: 0 0 20px;
+}
+
+.sb-urun__fiyat .price {
+	margin: 0;
+}
+
+.sb-urun__kdv {
+	color: var(--wp--preset--color--metin-ikincil, #6e665d);
+	font-size: 13.5px;
+}
+
+/* Fiyat metin-ikincil (5,34:1); Mober'in #C1C1C1'i kopyalanmaz (spec §4.5). */
+.sb-urun__ozet .price {
+	margin: 0 0 20px;
+	color: var(--wp--preset--color--metin-ikincil, #6a6a6a);
+	font-size: 1.5rem;
+}
+
+
+.sb-urun__ozet .woocommerce-product-details__short-description {
+	margin: 0 0 30px;
+	color: var(--wp--preset--color--metin-govde, #747474);
+}
+
+/* Hemen Satın Al: formda tam genişlikte ikinci satır (çerçeveli düğme). */
+.sb-urun__ozet .sb-hemen {
+	flex: 1 0 100%;
+	inline-size: 100%;
+	min-block-size: 54px;
+	margin-top: 12px;
+	border-radius: 999px;
+}
+
+.sb-urun__ozet .sb-hemen:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+
+.sb-urun__ozet form.cart > .sb-hemen {
+	margin-bottom: 0;
+}
+
+/* Üç avantaj satırı ve kurumsal kutu (envanter §2 .perks, .corp). */
+.sb-urun__avantajlar {
+	display: grid;
+	gap: 12px;
+	margin: 22px 0;
+}
+
+.sb-urun__avantajlar > div {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	color: var(--wp--preset--color--metin-govde, #4b443c);
+	font-size: 14px;
+}
+
+.sb-urun__avantajlar svg {
+	flex: none;
+	inline-size: 26px;
+	block-size: 26px;
+	fill: none;
+	stroke: var(--wp--preset--color--aksan, #1f3a2e);
+	stroke-width: 1.4;
+}
+
+.sb-urun__avantajlar b {
+	color: var(--wp--preset--color--metin, #241f1a);
+	font-weight: 500;
+}
+
+.sb-urun__kurumsal {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+	margin: 0 0 22px;
+	padding: 16px 18px;
+	border-radius: 10px;
+	background: var(--wp--preset--color--yuzey, #f4f1ec);
+	font-size: 14px;
+}
+
+.sb-urun__kurumsal a {
+	display: inline-flex;
+	align-items: center;
+	min-block-size: var(--sb-dokunma, 44px);
+	color: var(--wp--preset--color--aksan, #1f3a2e);
+	font-weight: 500;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.sb-yorum-yok {
+	margin: 0 0 16px;
+	color: var(--wp--preset--color--metin, #241f1a);
+}
+
+/* 992 px altında sabit alt çubuk: fiyat + Sepete Ekle (hemen-al.js `hidden`ı kaldırır). */
+.sb-urun__mbar {
+	display: none;
+}
+
+@media (max-width: 991.98px) {
+	.sb-urun__mbar:not([hidden]) {
+		position: fixed;
+		inset-inline: 0;
+		inset-block-end: 0;
+		z-index: 90;
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+		border-top: 1px solid var(--wp--preset--color--kenarlik, #e2ddd5);
+		background: rgba(250, 248, 244, 0.96);
+	}
+
+	.sb-urun__mbar-fiyat {
+		font-size: 20px;
+		font-weight: 600;
+		color: var(--wp--preset--color--metin, #241f1a);
+	}
+
+	.sb-urun__mbar-dugme {
+		flex: 1;
+		min-block-size: 50px;
+		border-radius: 999px;
+	}
+
+	.sb-urun__mbar-dugme:disabled {
+		opacity: 0.55;
+	}
+
+	body.single-product {
+		padding-block-end: 72px;
+	}
+
+	/* Odaklanan öğe sabit alt çubuğun altında kalmasın (WCAG 2.4.11). */
+	html:has(.sb-urun__mbar:not([hidden])) {
+		scroll-padding-block-end: 88px;
+	}
+}
+
+.sb-urun__not {
+	margin: 0 0 20px;
+}
+
+.sb-urun__ozet form.cart {
+	margin: 0 0 20px;
+}
+
+.sb-urun__aksiyonlar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 0 0 20px;
+}
+
+/* Sepete Ekle satırındaki kalp: satır yüksekliğinde kare, ek boşluk yok (inc/urun.php). Blocksy satırın
+   her çocuğuna --item-width (varsayılan %100) veriyor; kalp kabı içeriği kadar, düğmeden sonra. */
+.ct-cart-actions .sb-urun__aksiyonlar {
+	--item-width: auto;
+	--item-order: 3;
+	flex: 0 0 auto;
+	align-self: stretch;
+	margin: 0;
+}
+
+.ct-cart-actions .sb-urun__aksiyonlar .sb-begeni {
+	width: var(--theme-button-min-height, 44px);
+	height: auto;
+	min-height: var(--theme-button-min-height, 44px);
+	align-self: stretch;
+}
+
+/* En dar telefonlar: üç parça tek satırda, "Sepete Ekle" tek satır (hallmark kapı 49). */
+@media (max-width: 374px) {
+	.sb-urun__ozet .ct-cart-actions {
+		--theme-button-padding: 5px 10px;
+	}
+
+	.sb-urun__ozet .ct-cart-actions .quantity[data-type="type-2"] {
+		--quantity-width: 88px;
+	}
+}
+
+.sb-urun__ozet .product_meta {
+	display: grid;
+	gap: 6px;
+	color: var(--wp--preset--color--metin-ikincil, #6a6a6a);
+	font-size: 14px;
+}
+
+/* Meta bağlantıları (Kategori, Etiket) cümle içinde: yalnız renkle ayrılıyordu (2,33:1 çevre
+   metinle; axe link-in-text-block, WCAG 1.4.1). Görev 12: alt çizgi. */
+.sb-urun__ozet .product_meta a {
+	color: var(--wp--preset--color--metin, #333333);
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+/* ---------- Sekmeler: ≥ 768 px tablist, altında <details> akordiyonu ---------- */
+.sb-urun-sekmeler {
+	margin-block-end: 40px;
+}
+
+.sb-urun-sekmeler__liste {
+	display: none;
+}
+
+@media (min-width: 768px) {
+	.sb-urun-sekmeler__liste {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0 40px;
+		margin: 0 0 40px;
+		border-bottom: 1px solid var(--wp--preset--color--kenarlik, #dedede);
+	}
+}
+
+.sb-urun-sekmeler__sekme {
+	display: inline-flex;
+	align-items: center;
+	min-block-size: var(--sb-dokunma, 44px);
+	min-inline-size: var(--sb-dokunma, 44px);
+	margin-bottom: -1px;
+	padding: 10px 0;
+	border-bottom: 2px solid transparent;
+	color: var(--wp--preset--color--metin-ikincil, #6a6a6a);
+	font-size: 14px;
+	letter-spacing: var(--sb-harf-sekme, 0.11em);
+	text-decoration: none;
+	text-transform: uppercase;
+	transition: color var(--sb-sure-hizli, 0.2s), border-color var(--sb-sure-hizli, 0.2s);
+}
+
+/* Seçili: aksan-koyu alt çizgi (4,96:1 ≥ 3:1); üzerine gelme açık kum (Görev 12, anasayfa.css ile aynı). */
+/* Üzerine gelme seçiliden ayrı (sekme-durum): aksan ile aksan-koyu bu temada aynı yeşil (Görev 5 belirteçleri),
+   bu yüzden hover çizgisi altın. */
+.sb-urun-sekmeler__sekme:hover {
+	border-bottom-color: var(--wp--preset--color--altin, #d6b685);
+	color: var(--wp--preset--color--metin, #333333);
+}
+
+.sb-urun-sekmeler__sekme[aria-selected="true"] {
+	border-bottom-color: var(--wp--preset--color--aksan-koyu, #7d6e55);
+	color: var(--wp--preset--color--metin, #333333);
+}
+
+.sb-urun-sekmeler__oge {
+	border-top: 1px solid var(--wp--preset--color--kenarlik, #dedede);
+}
+
+.sb-urun-sekmeler__oge:last-child {
+	border-bottom: 1px solid var(--wp--preset--color--kenarlik, #dedede);
+}
+
+.sb-urun-sekmeler__ozet {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+	min-block-size: var(--sb-dokunma, 44px);
+	padding: 10px 0;
+	cursor: pointer;
+	list-style: none;
+}
+
+.sb-urun-sekmeler__ozet::-webkit-details-marker {
+	display: none;
+}
+
+/* Artı/eksi yalnız görsel; ekran okuyucu açık/kapalı durumunu <details>'ten okur. */
+.sb-urun-sekmeler__ozet::after {
+	content: "+" / "";
+	color: var(--wp--preset--color--metin, #333333);
+	font-size: 1.25rem;
+	line-height: 1;
+}
+
+.sb-urun-sekmeler__oge[open] > .sb-urun-sekmeler__ozet::after {
+	content: "–" / "";
+}
+
+.sb-urun-sekmeler__baslik {
+	margin: 0;
+	color: var(--wp--preset--color--metin, #333333);
+	font-size: 14px;
+	font-weight: 500;
+	letter-spacing: var(--sb-harf-sekme, 0.11em);
+	text-transform: uppercase;
+}
+
+.sb-urun-sekmeler__panel {
+	padding: 0 0 30px;
+	color: var(--wp--preset--color--metin-govde, #747474);
+}
+
+.sb-urun-sekmeler__panel[hidden] {
+	display: none;
+}
+
+/* Sekme düzeni (sekmeler.js, ≥ 768 px): özetler ve ayraçlar gizli. */
+.sb-sekmeler--etkin .sb-urun-sekmeler__ozet {
+	display: none;
+}
+
+.sb-sekmeler--etkin .sb-urun-sekmeler__oge {
+	border: 0;
+}
+
+.sb-sekmeler--etkin .sb-urun-sekmeler__panel {
+	max-inline-size: 900px;
+	margin-inline: auto;
+}
+
+/* Panel içerikleri: teknik tablo, künye listesi, bağlantılar. */
+.sb-urun-sekmeler__panel .shop_attributes {
+	inline-size: 100%;
+	border-collapse: collapse;
+}
+
+/* Değer hücresi de metin renginde: Blocksy çift satırlara açık zemin basıyor, kendi #747474'ü o
+   zeminde 4,5:1'in altına düşüyor (axe color-contrast; Plan 2 Görev 4 tablo çok satırlı oldu). */
+.sb-urun-sekmeler__panel .shop_attributes th,
+.sb-urun-sekmeler__panel .shop_attributes td {
+	padding: 14px 20px; /* metin hücre çizgisine yapışmasın (owner isteği 2026-10-01) */
+	border-bottom: 1px solid var(--wp--preset--color--kenarlik-acik, #e4e4e4);
+	color: var(--wp--preset--color--metin, #333333);
+	text-align: start;
+	vertical-align: top;
+}
+
+.sb-urun-sekmeler__panel .shop_attributes th {
+	inline-size: 40%;
+	font-weight: 500;
+}
+
+.sb-urun-sekmeler__panel .shop_attributes td p {
+	margin: 0;
+}
+
+.sb-urun-sekmeler__panel .sb-kunye {
+	display: grid;
+	grid-template-columns: max-content minmax(0, 1fr);
+	/* baseline: e-posta bağlantısı 44 px'lik dokunma kutusu; etiket ve değer ilk satırın taban çizgisinde buluşur. */
+	align-items: baseline;
+	gap: 6px 20px;
+	margin: 0 0 20px;
+}
+
+.sb-urun-sekmeler__panel .sb-kunye dt {
+	color: var(--wp--preset--color--metin, #333333);
+	font-weight: 500;
+}
+
+.sb-urun-sekmeler__panel .sb-kunye dd {
+	margin: 0;
+}
+
+.sb-urun__alt-baslik {
+	margin: 20px 0 10px;
+	color: var(--wp--preset--color--metin, #333333);
+	font-size: 14px;
+	font-weight: 500;
+	letter-spacing: var(--sb-harf-etiket, 0.2em);
+	text-transform: uppercase;
+}
+
+.sb-urun__baglantilar {
+	margin: 0 0 20px;
+	padding: 0;
+	list-style: none;
+}
+
+/* Künye satırındaki tek başına bağlantı (e-posta, enerji etiketi, bilgi formu) da dokunma hedefi. */
+.sb-urun__baglantilar a,
+.sb-urun-sekmeler__panel .sb-kunye dd > a {
+	display: inline-flex;
+	align-items: center;
+	min-block-size: var(--sb-dokunma, 44px);
+	color: var(--wp--preset--color--metin, #333333);
+}
+
+/* Yorum formunun yıldızları ≥ 44×44 (spec §4.1; Görev 12 ölçümü 23×14). Blocksy yıldızı
+   ::before'da 14 px çiziyor (woocommerce.min.css .comment-form-rating .stars a:before); bağlantı
+   kutusu büyür, yıldız ortada kalır. Renk base.css'te (--star-rating-*, Plan 2 Görev 2). */
+.comment-form-rating .stars a {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-inline-size: var(--sb-dokunma, 44px);
+	min-block-size: var(--sb-dokunma, 44px);
+	padding: 0;
+}
+
+/* Yorum alanındaki cümle içi bağlantılar (Yorum Kuralları, formdaki KVKK notu) altı çizili: renk tek
+   başına ayırt etmiyor (axe link-in-text-block). sayfa.css'teki .sb-form-kvkk kuralı ürün
+   sayfasında yüklenmiyor (sb_stil_haritasi). */
+.sb-yorum-kurallari a,
+#review_form .sb-form-kvkk a {
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+/* Küçük görsel şeridi bir kaydırma kabı (overflow-y: auto): odak halkası içeri çizilir (Görev 12). */
+.sb-urun__kucukler .sb-urun__kucuk:focus-visible {
+	outline-offset: -2px;
+}
+
+/* "Temizle" (seçimi sıfırla) bağımsız bağlantı ≥ 44 px (spec §4.1; Görev 12 ölçümü 51×17). WC onu
+   visibility ile açıp kapatıyor (add-to-cart-variation.js:755-762); display'e dokunmak güvenli. */
+.variations_form .reset_variations {
+	display: inline-flex;
+	align-items: center;
+	min-block-size: var(--sb-dokunma, 44px);
+}
+
+/* Beğen düğmesi ürün sayfasında (Plan 2 Görev 12): 48 × 48 px, beyaz zeminde koyu ikon
+   (12,6:1), basılıyken dolu. */
+.sb-urun__aksiyonlar .sb-begeni {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	padding: 0;
+	border: 1px solid var(--wp--preset--color--metin, #333333);
+	border-radius: 0;
+	background: transparent;
+	color: var(--wp--preset--color--metin, #333333);
+	cursor: pointer;
+}
+
+.sb-urun__aksiyonlar .sb-begeni:hover,
+.sb-urun__aksiyonlar .sb-begeni:focus-visible {
+	background: var(--wp--preset--color--aksan, #c3b8a5);
+}
+
+.sb-urun__aksiyonlar .sb-begeni:focus-visible {
+	outline: 2px solid var(--wp--preset--color--metin, #333333);
+	outline-offset: 2px;
+}
+
+.sb-urun__aksiyonlar .sb-begeni .sb-ikon {
+	width: 22px;
+	height: 22px;
+}
+
+/* Puan satırındaki "(N müşteri değerlendirmesi)" bağlantısı ≥ 44 px (gerçek yorum varsa basılır). */
+.sb-urun__ozet .woocommerce-review-link {
+	display: inline-flex;
+	align-items: center;
+	min-block-size: var(--sb-dokunma, 44px);
+}

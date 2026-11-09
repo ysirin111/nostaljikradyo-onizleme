@@ -684,3 +684,79 @@
 	align-items: center;
 	min-block-size: var(--sb-dokunma, 44px);
 }
+
+/* Kişiselleştirme seçenekleri (magaza-site/kisisellestirme.php; owner 2026-11-09): sepete ekle satırının
+   üstünde tam genişlik; her seçenek tıklanabilir bir satır, ücret sağda. */
+.sb-kisisel {
+	flex: 1 1 100%;
+	inline-size: 100%;
+	margin: 0 0 18px;
+	padding: 0;
+	border: 0;
+	min-inline-size: 0;
+}
+.sb-kisisel__baslik {
+	margin: 0 0 10px;
+	padding: 0;
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--wp--preset--color--metin);
+}
+.sb-kisisel__secenek {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-block-size: var(--sb-dokunma, 48px);
+	margin: 0 0 8px;
+	padding: 10px 14px;
+	border: 1px solid var(--wp--preset--color--kenarlik);
+	border-radius: calc(var(--sb-kart-radius, 16px) * 0.6);
+	background: var(--wp--preset--color--yuzey);
+	cursor: pointer;
+	transition: border-color var(--sb-sure-hizli, 0.15s) ease, background-color var(--sb-sure-hizli, 0.15s) ease;
+}
+.sb-kisisel__secenek:hover {
+	border-color: var(--wp--preset--color--aksan);
+}
+.sb-kisisel__secenek:has(input:checked) {
+	border-color: var(--wp--preset--color--aksan);
+	box-shadow: inset 0 0 0 1px var(--wp--preset--color--aksan);
+}
+.sb-kisisel__secenek input {
+	inline-size: 18px;
+	block-size: 18px;
+	margin: 0;
+	flex: none;
+	accent-color: var(--wp--preset--color--aksan);
+}
+.sb-kisisel__ad {
+	flex: 1;
+	font-size: 15px;
+	color: var(--wp--preset--color--metin);
+}
+.sb-kisisel__ucret {
+	font-size: 15px;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	color: var(--wp--preset--color--metin);
+}
+.sb-kisisel__not {
+	margin: 4px 0 0;
+	font-size: 13px;
+	line-height: 1.5;
+	color: var(--wp--preset--color--metin-ikincil);
+}
+
+/* Panelden girilen ürün rozeti (ör. "Yerli üretim"), başlığın üstünde; kart rozetiyle aynı görünüm. */
+.sb-urun__rozet {
+	margin: 0 0 10px;
+}
+.sb-urun__rozet .sb-rozet {
+	display: inline-block;
+	padding: 3px 10px;
+	border-radius: 3px;
+	background: var(--wp--preset--color--aksan);
+	color: #fff;
+	font-size: 12px;
+	font-weight: 500;
+}

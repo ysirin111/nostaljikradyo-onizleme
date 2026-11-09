@@ -206,6 +206,15 @@
   font-size: 13px;
 }
 
+/* Ana sayfanın öne çıkan kartında kısa açıklama (template-parts/kart.php `ozet`). */
+.sb-mkart__ozet {
+  margin: 8px 0 4px;
+  color: var(--wp--preset--color--metin-govde, #4a433b);
+  font-size: 14px;
+  line-height: 1.55;
+  max-width: 52ch;
+}
+
 .sb-renkler {
   display: flex;
   flex-wrap: wrap;

@@ -1,8 +1,7 @@
 /**
- * Hediye rehberi ve referanslar: kademeli giriş (Görev 6; envanter §1.5, §1.6) — [data-sb-kademeli].
+ * Ana sayfa ızgaraları (videolar, referanslar): kademeli giriş — [data-sb-kademeli].
  *
- * Öneri bağlantıları düz bağlantıdır (ürün sayfası, renkli öneride ?attribute_pa_renk=<slug>); JS
- * gerekmez. Bu betik yalnız ızgaranın çocuklarını görünür alana girince sırayla getirir. Gizleyen sınıfı
+ * Bu betik yalnız ızgaranın çocuklarını görünür alana girince sırayla getirir. Gizleyen sınıfı
  * yalnız betik ekler, yalnız hareket serbestken ve yalnız ilk ekranın altındaki ızgaraya: JS yoksa ya
  * da hareket azaltılmışsa hiçbir şey gizlenmez (belirme.js ile aynı kural, spec §4.4).
  */

@@ -18,406 +18,140 @@
   --sb-altin-metin: #7d5e2c;
 }
 
-/* ---------- 1) Sinematik slayt (envanter §1.2) ---------- */
-.sb-slayt {
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  min-height: clamp(440px, 46vw, 600px);
-  overflow: hidden;
-  background: #241b14;
-  color: #fff;
+/* ---------- 1) Öne çıkan ürünler (owner 2026-11-09; hero ve ürün sekmeleri yerine) ---------- */
+.sb-vitrin {
+  padding: clamp(36px, 5vw, 64px) 0 clamp(44px, 6vw, 72px);
 }
 
-.sb-slayt__arkalar {
-  position: absolute;
-  inset: 0;
-  will-change: transform;
-}
-
-.sb-slayt__arka {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 1.3s ease;
-}
-
-.sb-slayt__arka.is-etkin {
-  opacity: 1;
-}
-
-.sb-slayt__arka[hidden] {
-  display: none;
-}
-
-.sb-slayt__arka img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 75% 55%;
-  transform: scale(1.09);
-  transform-origin: 70% 58%;
-}
-
-.sb-slayt__arka.is-etkin img {
-  animation: sb-itme 10s cubic-bezier(0.2, 0.6, 0.3, 1) both, sb-aydinlan 1.2s ease-out both;
-}
-
-@keyframes sb-itme {
-  from { transform: scale(1); }
-  to { transform: scale(1.09); }
-}
-
-@keyframes sb-aydinlan {
-  from { filter: brightness(0.75) saturate(0.9); }
-  to { filter: brightness(1) saturate(1); }
-}
-
-/* Okunurluk perdesi: mobilde alttan, masaüstünde soldan koyu. */
-.sb-slayt::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(0deg, rgba(24, 17, 11, 0.95) 12%, rgba(24, 17, 11, 0.35) 80%);
-  pointer-events: none;
-}
-
-.sb-slayt__isik,
-.sb-slayt__toz,
-.sb-slayt__parlama {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  mix-blend-mode: screen;
-}
-
-.sb-slayt__isik {
-  opacity: 0;
-  background:
-    radial-gradient(ellipse 34% 42% at 74% 60%, rgba(255, 176, 84, 0.5), transparent 72%),
-    radial-gradient(ellipse 22% 30% at 40% 16%, rgba(255, 206, 130, 0.32), transparent 70%);
-  animation: sb-isik-gel 3s ease-out 0.4s both, sb-nefes 7s ease-in-out 3.4s infinite alternate;
-}
-
-@keyframes sb-isik-gel {
-  from { opacity: 0; }
-  to { opacity: 0.85; }
-}
-
-@keyframes sb-nefes {
-  from { opacity: 0.85; }
-  to { opacity: 0.55; }
-}
-
-.sb-slayt__parlama {
-  opacity: 0;
-  background: radial-gradient(ellipse 60% 75% at 72% 58%, rgba(255, 200, 120, 0.4), transparent 72%);
-}
-
-.sb-slayt__parlama.is-parla {
-  animation: sb-parla 1.5s ease-out;
-}
-
-@keyframes sb-parla {
-  0% { opacity: 0; }
-  18% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-.sb-slayt__karanlik {
-  position: absolute;
-  inset: 0;
-  z-index: 8;
-  background: #0a0604;
-  pointer-events: none;
-  animation: sb-safak 1.4s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-/* Perde saf CSS (JS ya da görsel yükleme beklemez; azaltılmış harekette hiç görünmez). Eskiden opaklık 1'den
-   2,6 sn'de iniyordu: ilk 1-2 sn hero kapkara görünüyordu. Şimdi görsel baştan seçilir, perde yalnız yumuşatır. */
-@keyframes sb-safak {
-  0% { opacity: 0.5; }
-  100% { opacity: 0; visibility: hidden; }
-}
-
-/* Slayt metinleri aynı ızgara hücresinde üst üste: hero en uzun metin kadar boy alır, slayt değişince
-   boyu ve altındaki bölüm oynamaz (owner 2026-11-07: dar telefonda metinler farklı satıra kırılıyor, etkin
-   metin akışta, öbürleri mutlak olduğu için hero her geçişte uzayıp kısalıyordu). Metinler alta yaslı:
-   düğmeler her slaytta aynı yerde. JS yokken öbür slaytlar hidden (display: none), hücreye girmez. */
-.sb-slayt__metinler {
-  position: relative;
-  z-index: 3;
-  display: grid;
-  width: 100%;
-  padding-block: 56px 96px;
-}
-
-.sb-slayt__metin {
-  position: relative;
-  grid-area: 1 / 1;
-  align-self: end;
-  max-width: 560px;
-  opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.9s var(--sb-ease), transform 0.9s var(--sb-ease);
-  pointer-events: none;
-}
-
-.sb-slayt__metin.is-etkin {
-  opacity: 1;
-  transform: none;
-  pointer-events: auto;
-}
-
-.sb-slayt__metin.is-etkin > * {
-  animation: sb-yuksel 1s var(--sb-ease) both;
-  animation-delay: calc(var(--sb-i, 0) * 0.15s + var(--sb-gecikme, 0s));
-}
-
-.sb-slayt--ilk {
-  --sb-gecikme: 0.4s;
-}
-
-.sb-slayt__metin.is-etkin > .sb-slayt__baslik { --sb-i: 1; }
-.sb-slayt__metin.is-etkin > .sb-slayt__yazi { --sb-i: 3; }
-.sb-slayt__metin.is-etkin > .sb-slayt__dugmeler { --sb-i: 4; }
-
-.sb-slayt__metin.is-etkin .sb-slayt__vurgu {
-  animation: sb-yuksel 1s var(--sb-ease) both;
-  animation-delay: calc(0.3s + var(--sb-gecikme, 0s));
-}
-
-@keyframes sb-yuksel {
-  from { opacity: 0; transform: translateY(24px); filter: blur(8px); }
-  to { opacity: 1; transform: none; filter: blur(0); }
-}
-
-.sb-slayt__ust {
-  margin: 0 0 18px;
-  color: #e6dccb;
-  font-size: 12.5px;
-  font-weight: 500;
-  letter-spacing: 0.3em;
-}
-
-.sb-slayt__baslik {
-  margin: 0;
-  color: #fff;
-  font-size: clamp(40px, 5vw, 68px);
-  font-weight: 500;
-  line-height: 1.08;
-  letter-spacing: -0.025em;
+.sb-vitrin__baslik {
+  margin: 0 0 clamp(26px, 3.6vw, 44px);
+  color: var(--wp--preset--color--metin, #241f1a);
+  font-size: clamp(26px, 3vw, 42px);
+  font-weight: 300;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
   text-wrap: balance;
 }
 
-.sb-slayt__vurgu {
-  display: block;
-  color: var(--wp--preset--color--altin, #d6b685);
-  font-style: normal;
-}
-
-.sb-slayt__yazi {
-  max-width: 46ch;
-  margin: 20px 0 0;
-  color: #ece5d8;
-  font-size: 16px;
-  line-height: 1.7;
-}
-
-.sb-slayt__dugmeler {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 28px;
-}
-
-.sb-slayt__dugme {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 48px;
-  padding: 0 26px;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  font-size: 14.5px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: transform 0.3s var(--sb-ease), background-color 0.3s, border-color 0.3s;
-  --sb-odak-rengi: #fff;
-}
-
-.sb-slayt__dugme--dolu {
-  background: var(--wp--preset--color--aksan, #1f3a2e);
-  color: #fff;
-  box-shadow: 0 14px 26px -14px rgba(0, 0, 0, 0.8);
-}
-
-.sb-slayt__dugme--dolu:hover {
-  background: #2a4a3b;
-  color: #fff;
-  transform: translateY(-2px);
-}
-
-.sb-slayt__dugme--cerceve {
-  border-color: rgba(255, 255, 255, 0.55);
-  color: #fff;
-}
-
-.sb-slayt__dugme--cerceve:hover {
-  border-color: #fff;
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
-}
-
-.sb-slayt__dugme:active {
-  transform: scale(0.98);
-}
-
-.sb-slayt__denetim[hidden] {
-  display: none;
-}
-
-.sb-slayt__sonraki {
-  position: absolute;
-  top: 50%;
-  right: var(--sb-kenar);
-  z-index: 4;
-  display: none;
-  place-items: center;
-  width: 52px;
-  height: 52px;
-  padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 50%;
-  background: rgba(20, 14, 9, 0.25);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-  color: #fff;
-  cursor: pointer;
-  translate: 0 -50%;
-  transition: background-color 0.3s;
-  --sb-odak-rengi: #fff;
-}
-
-.sb-slayt__sonraki:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.sb-slayt__alt {
-  position: absolute;
-  right: var(--sb-kenar);
-  bottom: 14px;
-  z-index: 4;
-  display: flex;
-  align-items: center;
-}
-
-.sb-slayt__nokta,
-.sb-slayt__duraklat {
+.sb-vitrin__liste {
   display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(16px, 2.4vw, 32px);
+  max-width: 1040px;
+  margin: 0 auto;
   padding: 0;
-  border: 0;
-  background: none;
-  color: #fff;
-  cursor: pointer;
-  --sb-odak-rengi: #fff;
+  list-style: none;
 }
 
-.sb-slayt__nokta::after {
-  content: "";
-  width: 11px;
-  height: 11px;
-  border: 1.5px solid #fff;
-  border-radius: 50%;
-  transition: background-color 0.3s;
+@media (min-width: 620px) {
+  .sb-vitrin__liste {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sb-vitrin__liste--1 {
+    grid-template-columns: minmax(0, 520px);
+    justify-content: center;
+  }
 }
 
-.sb-slayt__nokta[aria-current="true"]::after {
-  background: #fff;
+/* Büyük kartta ad ve fiyat bir kademe büyür; kısa açıklama iki-üç satır. */
+.sb-vitrin .sb-kart__ad {
+  font-size: clamp(20px, 1.8vw, 24px);
 }
 
-.sb-slayt__duraklat .sb-slayt__ikon-oynat,
-.sb-slayt__duraklat[aria-pressed="true"] .sb-slayt__ikon-dur {
-  display: none;
+.sb-vitrin .sb-mkart__fiyat .price {
+  font-size: clamp(18px, 1.6vw, 21px);
 }
 
-.sb-slayt__duraklat[aria-pressed="true"] .sb-slayt__ikon-oynat {
+.sb-vitrin__hepsi {
+  margin: clamp(28px, 3.6vw, 44px) 0 0;
+  text-align: center;
+}
+
+/* ---------- 2) Videolar (owner 2026-11-09): üç dikey 9:16 yuva; telefonda yana kayan sıra ---------- */
+.sb-videolar {
+  padding: clamp(40px, 5.5vw, 72px) 0;
+  background: var(--wp--preset--color--yuzey, #f4f1ec);
+}
+
+.sb-videolar__baslik {
+  margin: 0 0 clamp(24px, 3.2vw, 40px);
+  color: var(--wp--preset--color--metin, #241f1a);
+  font-size: clamp(22px, 2.4vw, 32px);
+  font-weight: 400;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.sb-videolar__izgara {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min(72%, 300px);
+  gap: 14px;
+  margin: 0 calc(-1 * var(--sb-kenar, 16px));
+  padding: 0 var(--sb-kenar, 16px) 6px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--sb-kenar, 16px);
+  list-style: none;
+}
+
+@media (min-width: 768px) {
+  .sb-videolar__izgara {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-columns: auto;
+    gap: clamp(16px, 2vw, 28px);
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0;
+    overflow: visible;
+  }
+}
+
+.sb-videolar__oge {
+  margin: 0;
+  scroll-snap-align: start;
+}
+
+.sb-videolar__video,
+.sb-videolar__yer-tutucu {
   display: block;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  border-radius: var(--sb-kart-radius, 16px);
+  background: #1b130d;
 }
 
-@media (min-width: 992px) {
-  .sb-slayt {
-    align-items: center;
-  }
-
-  .sb-slayt__arkalar {
-    inset: -72px 0 -72px 36%;
-  }
-
-  .sb-slayt::after {
-    background:
-      linear-gradient(90deg, #1b130d 0%, #1b130d 36%, rgba(27, 19, 13, 0) 62%),
-      linear-gradient(0deg, rgba(24, 17, 11, 0.35), transparent 35%);
-  }
-
-  .sb-slayt__isik,
-  .sb-slayt__toz,
-  .sb-slayt__parlama {
-    left: 30%;
-    width: 70%;
-  }
-
-  .sb-slayt__metinler {
-    padding-block: 56px;
-  }
-
-  .sb-slayt__sonraki {
-    display: grid;
-  }
-
-  .sb-slayt__alt {
-    bottom: 20px;
-  }
+.sb-videolar__video {
+  object-fit: cover;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .sb-slayt__karanlik,
-  .sb-slayt__isik,
-  .sb-slayt__toz,
-  .sb-slayt__parlama {
-    display: none;
-  }
-
-  .sb-slayt__arka img {
-    transform: none;
-    animation: none;
-  }
-
-  /* Yazıların yükselme girişi de kapanır: metin ilk boyamadan görünür (JS kapalı ölçüm dahil). */
-  .sb-slayt__metin.is-etkin > *,
-  .sb-slayt__metin.is-etkin .sb-slayt__vurgu {
-    animation: none;
-  }
-
-  .sb-slayt__arkalar {
-    inset: 0;
-  }
-
-  @media (min-width: 992px) {
-    .sb-slayt__arkalar {
-      inset: 0 0 0 36%;
-    }
-  }
+.sb-videolar__yer-tutucu {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  border: 1px dashed var(--wp--preset--color--kenarlik, #e2ddd5);
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(214, 182, 133, 0.18), transparent 60%),
+    var(--wp--preset--color--yuzey-2, #f1ede5);
+  color: var(--wp--preset--color--metin-ikincil, #6e665d);
+  font-size: 14px;
+  letter-spacing: 0.04em;
 }
 
-/* ---------- 2) Kayan güven şeridi (envanter §1.3) ---------- */
+.sb-videolar__yazi {
+  margin: 12px 0 0;
+  color: var(--wp--preset--color--metin, #241f1a);
+  font-size: 15px;
+  text-align: center;
+}
+
+/* ---------- 3) Kayan güven şeridi (envanter §1.3) ---------- */
 .sb-guven {
   position: relative;
   display: flex;
@@ -565,381 +299,7 @@
   }
 }
 
-/* ---------- 3) Ürün Çeşitleri (envanter §1.4) ---------- */
-.sb-urunler {
-  padding: clamp(44px, 6vw, 72px) 0 clamp(36px, 5vw, 56px);
-}
-
-.sb-urunler__baslik {
-  margin: 0;
-  color: var(--wp--preset--color--metin, #241f1a);
-  font-size: clamp(26px, 3vw, 42px);
-  font-weight: 300;
-  letter-spacing: 0.16em;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.sb-urunler__liste {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px clamp(22px, 5vw, 76px);
-  margin: clamp(26px, 3.6vw, 48px) 0 clamp(30px, 4vw, 52px);
-}
-
-.sb-urunler__sekme {
-  display: inline-flex;
-  align-items: center;
-  min-height: 52px;
-  padding: 0 2px;
-  border-bottom: 2px solid transparent;
-  color: var(--wp--preset--color--metin-ikincil, #6e665d);
-  font-size: 15px;
-  letter-spacing: 0.2em;
-  text-decoration: none;
-  text-transform: uppercase;
-  transition: color 0.3s, border-color 0.3s;
-}
-
-/* Dar ekran: üç sekme (Radyolar · Ledslim Tablo · Hysonic) tek satırda kalsın; yazı ve harf aralığı küçülür,
-   sekme yüksekliği (≥ 44 px dokunma) aynı. */
-@media (max-width: 767px) {
-  .sb-urunler__liste {
-    column-gap: clamp(12px, 3.4vw, 22px);
-  }
-
-  .sb-urunler__sekme {
-    font-size: 13px;
-    letter-spacing: 0.08em;
-  }
-}
-
-/* Üzerine gelme seçiliden ayrı: metin koyulaşır, alt çizgi altın. Seçili: koyu yeşil çizgi (≥ 3:1). */
-.sb-urunler__sekme:hover {
-  border-bottom-color: var(--wp--preset--color--altin, #d6b685);
-  color: var(--wp--preset--color--metin, #241f1a);
-}
-
-.sb-urunler__sekme[aria-selected="true"] {
-  border-bottom-color: var(--wp--preset--color--aksan, #1f3a2e);
-  color: var(--wp--preset--color--metin, #241f1a);
-}
-
-.sb-urunler__panel[hidden] {
-  display: none;
-}
-
-/* JS'siz: paneller alt alta, her biri kendi başlığıyla. */
-.sb-urunler__panel + .sb-urunler__panel {
-  margin-top: 56px;
-}
-
-.sb-urunler__panel-baslik {
-  margin: 0 0 20px;
-  font-size: clamp(24px, 2.4vw, 32px);
-  font-weight: 400;
-}
-
-.sb-sekmeler--etkin .sb-urunler__panel + .sb-urunler__panel {
-  margin-top: 0;
-}
-
-.sb-sekmeler--etkin .sb-urunler__panel-baslik {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-.sb-sekmeler--etkin .sb-urunler__panel:not([hidden]) {
-  animation: sb-panel-gel 0.6s var(--sb-ease);
-}
-
-@keyframes sb-panel-gel {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: none; }
-}
-
-.sb-urunler__panel:focus-visible {
-  outline-offset: 6px;
-}
-
-.sb-mizgara {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(12px, 1.4vw, 20px);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-@media (min-width: 992px) {
-  .sb-mizgara {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .sb-mizgara--tek > li {
-    grid-column: 2;
-  }
-}
-
-@media (max-width: 991.98px) {
-  .sb-mizgara--tek {
-    grid-template-columns: minmax(0, 440px);
-    justify-content: center;
-  }
-}
-
-/* ---------- 4) Hediye Rehberi (envanter §1.5) ---------- */
-.sb-hediye {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  padding: clamp(56px, 7vw, 104px) 0;
-  background: #120c08;
-  color: #fff;
-}
-
-.sb-hediye::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(0deg, rgba(18, 12, 8, 0.92), rgba(18, 12, 8, 0.7));
-  animation: sb-hediye-nefes 8s ease-in-out infinite alternate;
-}
-
-@keyframes sb-hediye-nefes {
-  from { opacity: 1; }
-  to { opacity: 0.72; }
-}
-
-.sb-hediye__ust {
-  max-width: 640px;
-  margin-bottom: clamp(28px, 4vw, 52px);
-}
-
-.sb-hediye__kick {
-  margin: 0 0 16px;
-  color: #e6dccb;
-  font-size: 12.5px;
-  font-weight: 500;
-  letter-spacing: 0.3em;
-}
-
-.sb-hediye__baslik {
-  margin: 0;
-  color: #fff;
-  font-size: clamp(34px, 4.4vw, 58px);
-  font-weight: 500;
-  line-height: 1.08;
-}
-
-.sb-hediye__baslik em {
-  display: block;
-  color: var(--wp--preset--color--altin, #d6b685);
-  font-style: normal;
-}
-
-.sb-hediye__giris {
-  max-width: 46ch;
-  margin: 16px 0 0;
-  color: #e3dac9;
-  font-size: 16px;
-}
-
-.sb-hediye__izgara {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(12px, 1.6vw, 22px);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.sb-hediye__kart {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border: 1px solid rgba(214, 182, 133, 0.22);
-  border-radius: 14px;
-  background: #1a120c;
-  transition: transform 0.5s var(--sb-ease), border-color 0.4s, box-shadow 0.5s;
-}
-
-.sb-hediye__kart:hover {
-  border-color: rgba(214, 182, 133, 0.7);
-  box-shadow: 0 30px 50px -24px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(214, 182, 133, 0.25);
-  transform: translateY(-8px);
-}
-
-.sb-hediye__gorsel {
-  position: relative;
-  aspect-ratio: 1 / 0.82;
-  overflow: hidden;
-}
-
-.sb-hediye__gorsel img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(0.86);
-  transition: transform 1.1s var(--sb-ease), filter 0.5s;
-}
-
-.sb-hediye__kart:hover .sb-hediye__gorsel img {
-  filter: brightness(1);
-  transform: scale(1.07);
-}
-
-.sb-hediye__gorsel::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, #1a120c 0%, rgba(26, 18, 12, 0) 38%);
-}
-
-.sb-hediye__metin {
-  position: relative;
-  z-index: 2;
-  margin-top: -6px;
-  padding: 4px clamp(16px, 1.8vw, 24px) clamp(16px, 1.8vw, 22px);
-}
-
-.sb-hediye__kart-baslik {
-  margin: 0;
-  color: #fff;
-  font-size: clamp(24px, 2.4vw, 30px);
-  font-weight: 500;
-}
-
-.sb-hediye__cumle {
-  max-width: 32ch;
-  margin: 6px 0 0;
-  color: #dcd2bf;
-  font-size: 13.5px;
-  line-height: 1.5;
-}
-
-.sb-hediye__oneriler {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin: 14px 0 0;
-  padding: 14px 0 0;
-  border-top: 1px solid rgba(214, 182, 133, 0.2);
-  list-style: none;
-}
-
-.sb-hediye__oneri {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  min-height: 44px;
-  padding: 4px 12px 4px 4px;
-  border: 1px solid rgba(214, 182, 133, 0.35);
-  border-radius: 999px;
-  color: #f0e8d7;
-  font-size: 13.5px;
-  line-height: 1.2;
-  text-decoration: none;
-  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
-  --sb-odak-rengi: #fff;
-}
-
-.sb-hediye__oneri:hover {
-  border-color: var(--wp--preset--color--altin, #d6b685);
-  background: rgba(214, 182, 133, 0.14);
-  color: #fff;
-}
-
-.sb-hediye__oneri-gorsel {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  overflow: hidden;
-  border-radius: 50%;
-  background: #e9dec6;
-}
-
-.sb-hediye__oneri-gorsel img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.sb-hediye__oneri-gorsel--sigdir img {
-  padding: 3px;
-  object-fit: contain;
-  mix-blend-mode: multiply;
-}
-
-.sb-hediye__oneri-ad {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.sb-hediye__oneri-ad small {
-  display: block;
-  margin-bottom: 1px;
-  color: var(--wp--preset--color--altin, #d6b685);
-  font-size: 10.5px;
-  line-height: 1.1;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.sb-hediye__oneri-not {
-  display: block;
-  margin-top: 2px;
-  color: rgba(240, 232, 215, 0.8);
-  font-size: 11px;
-  line-height: 1.1;
-}
-
-@media (min-width: 992px) {
-  .sb-hediye__izgara {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .sb-hediye__gorsel {
-    aspect-ratio: 1 / 0.88;
-  }
-
-  .sb-hediye::after {
-    background:
-      radial-gradient(ellipse 46% 60% at 82% 22%, rgba(255, 176, 84, 0.22), transparent 70%),
-      radial-gradient(ellipse 40% 55% at 12% 90%, rgba(255, 176, 84, 0.12), transparent 70%),
-      linear-gradient(90deg, #120c08 0%, rgba(18, 12, 8, 0.82) 45%, rgba(18, 12, 8, 0.55) 100%);
-  }
-}
-
-@media (max-width: 480px) {
-  .sb-hediye__izgara {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .sb-hediye__gorsel {
-    aspect-ratio: 1 / 0.9;
-  }
-
-  .sb-hediye__oneriler {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ---------- 5) Referanslar ve teklif kutusu (envanter §1.6) ---------- */
+/* ---------- 4) Referanslar ve teklif kutusu (envanter §1.6) ---------- */
 .sb-referans {
   position: relative;
   padding: clamp(64px, 8vw, 116px) 0 clamp(60px, 7vw, 100px);
@@ -1262,7 +622,7 @@
   }
 }
 
-/* ---------- Kademeli giriş (hediye-rehberi.js) ve bölüm belirme (belirme.js) ----------
+/* ---------- Kademeli giriş (kademeli.js) ve bölüm belirme (belirme.js) ----------
    Sınıfları yalnız betikler ekler, yalnız hareket serbestken ve yalnız ilk ekranın altındaki ızgaraya:
    JS yoksa ya da hareket azaltılmışsa hiçbir şey gizlenmez (spec §4.4). */
 @media (prefers-reduced-motion: no-preference) {
@@ -1282,11 +642,5 @@
 
   .sb-belirme-gecis {
     transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sb-hediye::after {
-    animation: none;
   }
 }

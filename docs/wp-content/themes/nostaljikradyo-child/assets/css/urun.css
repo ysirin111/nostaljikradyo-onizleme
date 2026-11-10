@@ -749,6 +749,9 @@
 
 /* Panelden girilen ürün rozeti (ör. "Yerli üretim"), başlığın üstünde; kart rozetiyle aynı görünüm. */
 .sb-urun__rozet {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
 	margin: 0 0 10px;
 }
 .sb-urun__rozet .sb-rozet {

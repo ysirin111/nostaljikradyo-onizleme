@@ -70,6 +70,180 @@
   text-align: center;
 }
 
+/* ---------- 1b) Kişiselleştirme anlatımı (owner 2026-11-10 taslağı): öne çıkan kartların altında,
+   "Tüm ürünleri gör"ün üstünde (one-cikan.php); üç vaat bandı + üç adım ---------- */
+.sb-ozel {
+  --sb-ozel-ara: clamp(10px, 3.4vw, 48px);
+  margin-top: clamp(40px, 5vw, 72px);
+}
+
+.sb-ozel__vaatler {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 14px 8px;
+  border: 1px solid var(--wp--preset--color--kenarlik-acik, #ece8e1);
+  border-radius: 14px;
+  background: var(--wp--preset--color--yuzey-sicak, #f7f1e3);
+  list-style: none;
+}
+
+.sb-ozel__vaat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 4px 12px;
+  color: var(--wp--preset--color--metin-govde, #4b443c);
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.sb-ozel__vaat + .sb-ozel__vaat {
+  border-left: 1px solid var(--wp--preset--color--kenarlik, #e2ddd5);
+}
+
+.sb-ozel__ikon {
+  flex: none;
+  color: var(--wp--preset--color--metin, #241f1a);
+}
+
+.sb-ozel__baslik {
+  margin: clamp(28px, 4vw, 52px) 0 clamp(24px, 3vw, 36px);
+  color: var(--wp--preset--color--metin, #241f1a);
+  font-size: clamp(24px, 2.6vw, 36px);
+  font-weight: 400;
+  line-height: 1.2;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.sb-ozel__adimlar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sb-ozel-ara);
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.sb-ozel__adim {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 76px;
+  padding: 20px 22px;
+  border: 1px solid var(--wp--preset--color--kenarlik-acik, #ece8e1);
+  border-radius: 14px;
+  background: var(--wp--preset--color--yuzey-sicak, #f7f1e3);
+  color: var(--wp--preset--color--metin, #241f1a);
+  font-size: 17px;
+  line-height: 1.3;
+}
+
+/* Sıra numarası köşede; beyaz metin koyu altın üstünde (#7d5e2c, 6:1). */
+.sb-ozel__no {
+  position: absolute;
+  top: -14px;
+  left: 18px;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sb-altin-metin, #7d5e2c);
+  box-shadow: 0 0 0 3px var(--wp--preset--color--zemin, #faf8f4);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Adımlar arasındaki ok: aralığın ortasında, yalnız süs. */
+@media (min-width: 768px) {
+  .sb-ozel__adim + .sb-ozel__adim::before {
+    position: absolute;
+    top: 50%;
+    left: calc(var(--sb-ozel-ara) / -2 - 5px);
+    width: 9px;
+    height: 9px;
+    border-top: 1.5px solid var(--wp--preset--color--metin-ikincil, #6e665d);
+    border-right: 1.5px solid var(--wp--preset--color--metin-ikincil, #6e665d);
+    content: "";
+    transform: translateY(-50%) rotate(45deg);
+  }
+}
+
+.sb-ozel__not {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  max-width: 860px;
+  margin: clamp(18px, 2.4vw, 28px) auto 0;
+  color: var(--wp--preset--color--metin-ikincil, #6e665d);
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.sb-ozel__not::before,
+.sb-ozel__not::after {
+  flex: 1 1 32px;
+  height: 1px;
+  background: var(--wp--preset--color--kenarlik, #e2ddd5);
+  content: "";
+}
+
+/* Dar ekran: vaatler ve adımlar üç sütunda kalır, ikon metnin üstüne çıkar. */
+@media (max-width: 767px) {
+  .sb-ozel__adim {
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    min-height: 0;
+    padding: 22px 8px 14px;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .sb-ozel__no {
+    top: -12px;
+    left: 50%;
+    width: 26px;
+    height: 26px;
+    font-size: 12px;
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 619px) {
+  .sb-ozel__vaatler {
+    padding-block: 12px;
+  }
+
+  .sb-ozel__vaat {
+    flex-direction: column;
+    gap: 6px;
+    padding: 2px 6px;
+    font-size: 12.5px;
+    text-align: center;
+  }
+
+  .sb-ozel__ikon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .sb-ozel__not::before,
+  .sb-ozel__not::after {
+    display: none;
+  }
+}
+
 /* ---------- 2) Videolar (owner 2026-11-09): üç dikey 9:16 yuva; telefonda yana kayan sıra ---------- */
 .sb-videolar {
   padding: clamp(40px, 5.5vw, 72px) 0;

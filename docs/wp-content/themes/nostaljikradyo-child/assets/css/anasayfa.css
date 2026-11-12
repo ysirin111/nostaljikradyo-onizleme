@@ -295,13 +295,14 @@
 .sb-videolar__yer-tutucu {
   display: block;
   width: 100%;
-  aspect-ratio: 9 / 16;
+  aspect-ratio: 4 / 5;
   border-radius: var(--sb-kart-radius, 16px);
   background: #1b130d;
 }
 
+/* Müşteri videoları kare ve 4:5, yazılar kareye yayılıyor (owner 2026-11-12): kırpılmaz, sığdırılır. */
 .sb-videolar__video {
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .sb-videolar__yer-tutucu {
